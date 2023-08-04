@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es6",
+        "moduleResolution": "node",
+        "outDir": "dist",
+        "baseUrl": "src",
+        "paths": {
+            "@controllers": ["controllers/index"],
+            "@helpers": ["helpers/index"]
+        },
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true
+    },
+    "ts-node": {
+        "require": ["tsconfig-paths/register"]
+    }
+}
