@@ -6,7 +6,8 @@ import cookieParser from "cookie-parser";
 import ejsLayouts from "express-ejs-layouts";
 import dotenv from "dotenv";
 
-import { homeController, userController, postController } from "@controllers";
+import { homeController, userController, } from "@controllers";
+import { postController, errorController } from '@controllers';
 import { getAbsPath } from "@helpers";
 import { initializeDb } from "@config";
 
@@ -18,6 +19,7 @@ function configurePipeline(app: express.Express) {
     app.use(homeController.router);
     app.use(userController.router);
     app.use(postController.router);
+    app.use(errorController.router);
 }
 
 function configureAppSettings(app: express.Express) {

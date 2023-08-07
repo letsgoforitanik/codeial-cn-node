@@ -12,8 +12,8 @@ router.use("/users", userRouter);
 userRouter.get("/sign-up", function (_, res) {
     return res.render("user/sign-up", {
         pageTitle: "Sign Up",
-        data: null,
         errorMessage: null,
+        data: null,
     });
 });
 
@@ -29,12 +29,21 @@ userRouter.post("/sign-up", async function (req, res) {
                 data: req.body,
             });
         }
+        
+        const response = await userRepo.createUser(result.data);
 
-        const info = result.data;
-        await userRepo.createUser(info);
+        if (!response.success) {
+            return res.render("user/sign-up", {
+                pageTitle: "Sign Up",
+                errorMessage: response.errorMessage,
+                data: req.body,
+            });
+        }
 
         return res.redirect("/users/sign-in");
-    } catch (error) {
+        
+    } 
+    catch (error) {
         console.log("Error : ", error);
         return res.redirect("/internal-server-error");
     }
