@@ -1,3 +1,4 @@
 import getAbsPath from "./getabspath";
+import validate from "./validate";
 
-export { getAbsPath };
+export { getAbsPath, validate };

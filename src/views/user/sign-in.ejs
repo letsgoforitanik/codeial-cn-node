@@ -1,0 +1,10 @@
+<%- contentFor('style') %>
+
+<%- contentFor('body') %>
+<h1>Sign In</h1>
+
+<form action="/users/sign-in" method="get">
+    <input type="email" name="email" placeholder="Your email" required>
+    <input type="password" name="password" placeholder="Your password" required>
+    <button type="submit">Sign In</button>
+</form>

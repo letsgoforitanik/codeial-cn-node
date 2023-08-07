@@ -6,9 +6,14 @@
         "moduleResolution": "node",
         "outDir": "dist",
         "baseUrl": "src",
+        "strict": true,
         "paths": {
             "@controllers": ["controllers/index"],
-            "@helpers": ["helpers/index"]
+            "@helpers": ["helpers/index"],
+            "@config": ["config/index"],
+            "@models": ["models/index"],
+            "@validators": ["validators/index"],
+            "@repositories": ["repositories/index"]
         },
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true
