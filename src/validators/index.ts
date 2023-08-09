@@ -1,3 +1,4 @@
 import signupValidator from "./signup-validator";
+import signinValidator from "./signin-validator";
 
-export { signupValidator };
+export { signupValidator, signinValidator };

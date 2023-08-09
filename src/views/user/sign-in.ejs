@@ -1,10 +1,15 @@
+<%  const { email, password } = data || {}; %>
 <%- contentFor('style') %>
 
 <%- contentFor('body') %>
 <h1>Sign In</h1>
 
-<form action="/users/sign-in" method="get">
-    <input type="email" name="email" placeholder="Your email" required>
+<% if (errorMessage) { %>
+    <div class="error-message"><%= errorMessage %></div> 
+<% } %>
+
+<form action="/users/sign-in" method="post">
+    <input type="email" name="email" placeholder="Your email" required value=<%= email %>>
     <input type="password" name="password" placeholder="Your password" required>
     <button type="submit">Sign In</button>
 </form>

@@ -4,10 +4,11 @@ import { Result } from "types";
 import * as validators from "@validators";
 
 const validatorsMap = new Map<string, ZodType>([
-    ["/sign-up", validators.signupValidator]
+    ["/sign-up", validators.signupValidator],
+    ["/sign-in", validators.signinValidator]
 ]);
 
-export default function validate<T>(request: Request) {
+export default function validate<T>(request: Request): Result<T> {
     const validator = validatorsMap.get(request.url)!;
     const result = validator.safeParse(request.body);
 

@@ -1,0 +1,12 @@
+<%- contentFor('style') %>
+
+<%- contentFor('body') %>
+<h1>Profile</h1>
+
+<a href="/users/sign-out">Sign Out</a>
+<br><br>
+
+<div>
+    <div>Name : <%= userInfo.name %></div>
+    <div>Email : <%= userInfo.email %></div>
+</div>
