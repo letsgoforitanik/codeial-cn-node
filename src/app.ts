@@ -8,7 +8,8 @@ import dotenv from "dotenv";
 
 import { homeController, userController, } from "@controllers";
 import { postController, errorController } from '@controllers';
-import { getAbsPath } from "@helpers";
+import { handleError } from '@middlewares';
+import { getAbsPath, trycatchify } from "@helpers";
 import { initializeDb } from "@config";
 
 function configurePipeline(app: express.Express) {
@@ -20,6 +21,7 @@ function configurePipeline(app: express.Express) {
     app.use(userController.router);
     app.use(postController.router);
     app.use(errorController.router);
+    app.use(handleError);
 }
 
 function configureAppSettings(app: express.Express) {
@@ -35,6 +37,8 @@ async function main() {
 
     configureAppSettings(app);
     configurePipeline(app);
+
+    trycatchify(app);
 
     await initializeDb();
     console.log("Database connection successfully made");

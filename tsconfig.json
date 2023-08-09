@@ -13,7 +13,8 @@
             "@config": ["config/index"],
             "@models": ["models/index"],
             "@validators": ["validators/index"],
-            "@repositories": ["repositories/index"]
+            "@repositories": ["repositories/index"],
+            "@middlewares" : ["middlewares/index"]
         },
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true
