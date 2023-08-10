@@ -3,6 +3,7 @@ import { validate } from "@helpers";
 import { userRepo } from "@repositories";
 import { passport } from '@config';
 import { SignUpInfo } from "types/validation";
+import { anonymousOnly, authorizedOnly } from "@middlewares";
 
 const router = express.Router();
 const userRouter = express.Router();
@@ -11,11 +12,11 @@ router.use("/users", userRouter);
 
 
 // render the sign-up page
-userRouter.get("/sign-up", (req, res) => res.render("user/sign-up"));
+userRouter.get("/sign-up", anonymousOnly, (req, res) => res.render("user/sign-up"));
 
 
 // create user
-userRouter.post("/sign-up", async function (req, res) {
+userRouter.post("/sign-up", anonymousOnly, async function (req, res) {
 
     const result = validate<SignUpInfo>(req);
 
@@ -42,25 +43,44 @@ userRouter.post("/sign-up", async function (req, res) {
 
 
 // render the sign-in page
-userRouter.get("/sign-in", (req, res) => res.render("user/sign-in"));
+userRouter.get("/sign-in", anonymousOnly, (req, res) => res.render("user/sign-in"));
 
 
 // create session on successful authentication
-userRouter.post("/sign-in", function (req, res) {
+userRouter.post("/sign-in", anonymousOnly, function (req, res, next) {
 
-    passport.authenticate('local', function (error: any, user: Express.User) {
+    function authCallback(err: any, user: any, info: any) {
+
+        if (err) return next(err);
 
         if (!user) {
             return res.render('user/sign-in', {
-                data: req.body,
-                errorMessage: 'Wrong username or password'
+                errorMessage: info.message,
+                data: req.body
             });
         }
 
-        return res.redirect('/users/profile');
+        function loginCallback(error: any) {
+            if (error) return next(error);
+            res.redirect('/users/profile');
+        }
 
-    });
+        req.login(user, loginCallback);
 
+    }
+
+    const handler = passport.authenticate('local', authCallback);
+
+    handler(req, res, next);
+
+});
+
+
+// profile page
+userRouter.get("/profile", authorizedOnly, function (req, res) {
+    console.log('isAuthenticated', req.isAuthenticated());
+    console.log('auth-user', req.user);
+    return res.send('Hello from Profile Page');
 });
 
 export { router };

@@ -8,15 +8,19 @@ type DoneFunction = (error: any, user?: Express.User | false, options?: IVerifyO
 const options = { usernameField: 'email', passwordField: 'password' };
 
 async function verify(email: string, password: string, done: DoneFunction) {
+
     const response = validateSignIn(email, password);
-    if (!response.success) return done(null, false);
+    if (!response.success) return done(null, false, { message: response.errors[0].message });
 
     const result = await userRepo.findUserByEmail(response.data.email);
-    if (!result.success) return done(null, false);
+    if (!result.success) return done(null, false, { message: 'User not found' });
 
     const user = result.data;
-    if (user.password !== password) return done(null, false);
+
+    if (user.password !== password) return done(null, false, { message: 'Wrong password entered' });
+
     return done(null, user);
+
 }
 
 const localStrategy = new LocalStrategy(options, verify);

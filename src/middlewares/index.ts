@@ -1,4 +1,5 @@
-import handleError from "./handle-error";
+import errorHandler from "./error-handler";
 import viewBag from "./viewbag";
+import { anonymousOnly, authorizedOnly } from "./auth-access";
 
-export { handleError, viewBag };
+export { errorHandler, viewBag, anonymousOnly, authorizedOnly };

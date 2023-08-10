@@ -1,7 +1,7 @@
 import { User } from "@models";
 import { UserDto } from "types/dto";
 import { SignUpInfo } from "types/validation";
-import { Result } from "types";
+import { Result } from "types/base";
 
 export async function createUser(info: SignUpInfo): Promise<Result<UserDto>> {
 

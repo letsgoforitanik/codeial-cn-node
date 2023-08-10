@@ -1,6 +1,6 @@
 import { Request } from "express";
 import { ZodType } from "zod";
-import { Result } from "types";
+import { Result } from "types/base";
 import * as validators from "@validators";
 import { SignInInfo } from "types/validation";
 

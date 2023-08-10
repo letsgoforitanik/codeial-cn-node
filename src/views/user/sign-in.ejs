@@ -1,6 +1,6 @@
 <% 
     var errorMessage, data;
-    const { email } = data;
+    const { email } = data ?? {};
     viewBag.pageTitle = 'Sign In';
 %>
 
@@ -13,7 +13,7 @@
     <div class="error-message"><%= errorMessage %></div> 
 <% } %>
 
-<form action="/users/sign-in" method="get">
+<form action="/users/sign-in" method="post">
     <input type="email" name="email" placeholder="Your email" required value="<%= email %>">
     <input type="password" name="password" placeholder="Your password" required>
     <button type="submit">Sign In</button>

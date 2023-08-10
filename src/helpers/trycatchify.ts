@@ -16,7 +16,7 @@ function trycatchifyRouter(router: Router) {
             const routeHandler = route.stack[0].handle;
 
             route.stack[0].handle = function (req: Request, res: Response, next: NextFunction) {
-                Promise.resolve().then(() => routeHandler(req, res, next)).catch(next);
+                Promise.resolve().then(() => routeHandler(req, res, next)).catch(error => next(error));
             };
         }
 

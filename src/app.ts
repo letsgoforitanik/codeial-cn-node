@@ -9,13 +9,13 @@ import dotenv from "dotenv";
 
 import { homeController, userController } from "@controllers";
 import { postController, errorController } from '@controllers';
-import { handleError, viewBag } from '@middlewares';
+import { errorHandler, viewBag } from '@middlewares';
 import { getAbsPath, trycatchify } from "@helpers";
 import { initializeDb, passport, sessionConfig } from "@config";
 
 
 function configurePipeline(app: express.Express) {
-    // middlewares
+    // middlewares ===========
     app.use(ejsLayouts);
     app.use(express.static("assets"));
     app.use(viewBag);
@@ -24,13 +24,13 @@ function configurePipeline(app: express.Express) {
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(bodyParser.urlencoded({ extended: false }));
-    // routers
+    // routers ===========
     app.use(homeController.router);
     app.use(userController.router);
     app.use(postController.router);
     app.use(errorController.router);
-    // error handler
-    app.use(handleError);
+    // global error handler =====
+    app.use(errorHandler);
 }
 
 function configureAppSettings(app: express.Express) {
