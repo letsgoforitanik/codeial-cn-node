@@ -1,10 +1,20 @@
+<% 
+    var errorMessage, data;
+    const { email } = data;
+    viewBag.pageTitle = 'Sign In';
+%>
+
 <%- contentFor('style') %>
 
 <%- contentFor('body') %>
 <h1>Sign In</h1>
 
+<% if (errorMessage) { %>  
+    <div class="error-message"><%= errorMessage %></div> 
+<% } %>
+
 <form action="/users/sign-in" method="get">
-    <input type="email" name="email" placeholder="Your email" required>
+    <input type="email" name="email" placeholder="Your email" required value="<%= email %>">
     <input type="password" name="password" placeholder="Your password" required>
     <button type="submit">Sign In</button>
 </form>

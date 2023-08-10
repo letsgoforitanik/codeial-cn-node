@@ -5,7 +5,7 @@ type SuccessResult<T> = {
 
 type ErrorResult = {
     success: false;
-    errorMessage: string;
+    errors: { path?: string, message: string }[];
 };
 
 export type Result<T> = SuccessResult<T> | ErrorResult;

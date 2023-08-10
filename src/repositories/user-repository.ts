@@ -10,12 +10,41 @@ export async function createUser(info: SignUpInfo): Promise<Result<UserDto>> {
     if (userCount > 0) {
         return {
             success: false,
-            errorMessage: 'User already exists'
+            errors: [{ message: 'User already exists' }]
         };
     }
 
     const result = await User.create(info);
     return { success: true, data: result as UserDto };
 
+}
+
+export async function findUserByEmail(email: string): Promise<Result<UserDto>> {
+
+    const user = await User.findOne({ email }, 'name email password');
+
+    if (!user) {
+        return {
+            success: false,
+            errors: [{ message: 'User not found' }]
+        }
+    }
+
+    return { success: true, data: user as UserDto };
+
+}
+
+export async function findUserById(id: string): Promise<Result<UserDto>> {
+
+    const user = await User.findById(id, 'name email password');
+
+    if (!user) {
+        return {
+            success: false,
+            errors: [{ message: 'User not found' }]
+        }
+    }
+
+    return { success: true, data: user as UserDto };
 
 }

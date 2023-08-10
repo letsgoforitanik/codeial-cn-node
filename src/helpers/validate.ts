@@ -2,23 +2,30 @@ import { Request } from "express";
 import { ZodType } from "zod";
 import { Result } from "types";
 import * as validators from "@validators";
+import { SignInInfo } from "types/validation";
 
 const validatorsMap = new Map<string, ZodType>([
-    ["/sign-up", validators.signupValidator]
+    ["/sign-up", validators.signupValidator],
+    ['/sign-in', validators.signinValidator]
 ]);
 
-export default function validate<T>(request: Request) {
-    const validator = validatorsMap.get(request.url)!;
-    const result = validator.safeParse(request.body);
 
+function validateData<T>(validator: ZodType, data: object) {
+    const result = validator.safeParse(data);
     if (result.success) return result as Result<T>;
+    const errors = result.error.errors.map(({ path, message }) => ({ path: path[0]?.toString(), message }));
+    return { success: false, errors } as Result<T>;
+}
 
-    const firstError = result.error.errors[0];
 
-    const errorResult: Result<T> = {
-        success: false,
-        errorMessage: firstError.message,
-    };
 
-    return errorResult;
+export function validate<T>(request: Request) {
+    const validator = validatorsMap.get(request.url)!;
+    return validateData<T>(validator, request.body);
+}
+
+
+export function validateSignIn(email: string, password: string) {
+    const validator = validators.signinValidator;
+    return validateData<SignInInfo>(validator, { email, password });
 }

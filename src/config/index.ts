@@ -1,3 +1,5 @@
 import { initializeDb } from "./initializedb";
+import sessionConfig from "./session-config";
+import passport from './passport-local-strategy';
 
-export { initializeDb };
+export { initializeDb, sessionConfig, passport };

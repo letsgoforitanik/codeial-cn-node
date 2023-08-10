@@ -3,24 +3,33 @@ import http from "http";
 import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import session from "express-session";
 import ejsLayouts from "express-ejs-layouts";
 import dotenv from "dotenv";
 
-import { homeController, userController, } from "@controllers";
+import { homeController, userController } from "@controllers";
 import { postController, errorController } from '@controllers';
-import { handleError } from '@middlewares';
+import { handleError, viewBag } from '@middlewares';
 import { getAbsPath, trycatchify } from "@helpers";
-import { initializeDb } from "@config";
+import { initializeDb, passport, sessionConfig } from "@config";
+
 
 function configurePipeline(app: express.Express) {
+    // middlewares
     app.use(ejsLayouts);
     app.use(express.static("assets"));
+    app.use(viewBag);
     app.use(cookieParser());
+    app.use(session(sessionConfig));
+    app.use(passport.initialize());
+    app.use(passport.session());
     app.use(bodyParser.urlencoded({ extended: false }));
+    // routers
     app.use(homeController.router);
     app.use(userController.router);
     app.use(postController.router);
     app.use(errorController.router);
+    // error handler
     app.use(handleError);
 }
 
@@ -31,6 +40,7 @@ function configureAppSettings(app: express.Express) {
 }
 
 async function main() {
+
     dotenv.config();
 
     const app = express();
@@ -47,6 +57,7 @@ async function main() {
 
     const server = http.createServer(app);
     server.listen(port, () => console.log(`Server is up and running on port ${port}`));
+
 }
 
 main();

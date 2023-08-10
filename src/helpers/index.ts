@@ -1,5 +1,5 @@
 import getAbsPath from "./getabspath";
-import validate from "./validate";
+import { validate, validateSignIn } from "./validate";
 import trycatchify from "./trycatchify";
 
-export { getAbsPath, validate, trycatchify };
+export { getAbsPath, trycatchify, validate, validateSignIn };
