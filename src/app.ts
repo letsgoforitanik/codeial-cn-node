@@ -4,12 +4,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import flash from 'connect-flash';
 import ejsLayouts from "express-ejs-layouts";
 import dotenv from "dotenv";
 
 import { homeController, userController } from "@controllers";
 import { postController, errorController } from '@controllers';
-import { errorHandler, viewBag } from '@middlewares';
+import { errorHandler, viewBag, locals } from '@middlewares';
 import { getAbsPath, trycatchify } from "@helpers";
 import { initializeDb, passport, sessionConfig } from "@config";
 
@@ -21,8 +22,10 @@ function configurePipeline(app: express.Express) {
     app.use(viewBag);
     app.use(cookieParser());
     app.use(session(sessionConfig));
+    app.use(flash());
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(locals);
     app.use(bodyParser.urlencoded({ extended: false }));
     // routers ===========
     app.use(homeController.router);

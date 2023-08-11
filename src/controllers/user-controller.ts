@@ -4,6 +4,7 @@ import { userRepo } from "@repositories";
 import { passport } from '@config';
 import { SignUpInfo } from "types/validation";
 import { anonymousOnly, authorizedOnly } from "@middlewares";
+import { UserDto } from "types/dto";
 
 const router = express.Router();
 const userRouter = express.Router();
@@ -78,9 +79,16 @@ userRouter.post("/sign-in", anonymousOnly, function (req, res, next) {
 
 // profile page
 userRouter.get("/profile", authorizedOnly, function (req, res) {
-    console.log('isAuthenticated', req.isAuthenticated());
-    console.log('auth-user', req.user);
-    return res.send('Hello from Profile Page');
+    return res.render('user/profile');
 });
+
+
+// sign out
+userRouter.get("/sign-out", authorizedOnly, function (req, res) {
+    req.logout(() => res.redirect('/users/profile'));
+});
+
+
+
 
 export { router };

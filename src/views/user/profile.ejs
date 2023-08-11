@@ -1,0 +1,13 @@
+<%
+    viewBag.pageTitle = 'Profile';
+%>
+
+<%- contentFor('style') %>
+
+<%- contentFor('body') %>
+<h1>Profile</h1>
+<br><br>
+<a href="/users/sign-out">Sign Out</a>
+
+<div>Name : <%= user.name %></div>
+<div>Email : <%= user.email %></div>
