@@ -1,7 +1,20 @@
-<% viewBag.pageTitle = 'Home'; %>
-
-<%- contentFor('style') %>
+<%
+    var errorMessage, message;
+    viewBag.pageTitle = 'Home'; 
+%>
 
 
 <%- contentFor('body') %>
-<h1>Welcome to Codeial</h1>
+<section id="feed-posts">
+    <h4>Posts</h4>
+
+    <% if (message) { %><div class="message"><%= message %></div><% } %>
+
+    <% if (errorMessage)  { %><div class="error-messsage"><%= errorMessage %></div><% } %>
+
+    <form action="/posts/create" method="post">
+        <textarea name="content" cols="30" rows="3" placeholder="Type here..."></textarea>
+        <br><br>
+        <button type="submit">Post</button>
+    </form>
+</section>

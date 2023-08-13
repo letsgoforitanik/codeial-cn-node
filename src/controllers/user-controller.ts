@@ -4,7 +4,7 @@ import { userRepo } from "@repositories";
 import { passport } from '@config';
 import { SignUpInfo } from "types/validation";
 import { anonymousOnly, authorizedOnly } from "@middlewares";
-import { UserDto } from "types/dto";
+
 
 const router = express.Router();
 const userRouter = express.Router();

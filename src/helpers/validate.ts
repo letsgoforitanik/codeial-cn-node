@@ -5,8 +5,9 @@ import * as validators from "@validators";
 import { SignInInfo } from "types/validation";
 
 const validatorsMap = new Map<string, ZodType>([
-    ["/sign-up", validators.signupValidator],
-    ['/sign-in', validators.signinValidator]
+    ["/users/sign-up", validators.signupValidator],
+    ['/users/sign-in', validators.signinValidator],
+    ['/posts/create', validators.postCreateValidator]
 ]);
 
 
@@ -20,7 +21,7 @@ function validateData<T>(validator: ZodType, data: object) {
 
 
 export function validate<T>(request: Request) {
-    const validator = validatorsMap.get(request.url)!;
+    const validator = validatorsMap.get(request.originalUrl)!;
     return validateData<T>(validator, request.body);
 }
 

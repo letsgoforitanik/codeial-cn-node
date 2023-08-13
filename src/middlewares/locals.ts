@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
 export default function locals(req: Request, res: Response, next: NextFunction) {
-    if (req.isAuthenticated()) res.locals.user = req.user;
+    res.locals.user = req.isAuthenticated() ? req.user : null;
     next();
 }

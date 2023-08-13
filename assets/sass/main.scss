@@ -16,10 +16,11 @@ body {
         justify-content: space-between;
         padding: 0px 20px;
 
-        #logo {
+        #logo > a {
             font-size: 30px;
             color: white;
             font-weight: bold;
+            text-decoration: none;
         }
 
         ul#nav {

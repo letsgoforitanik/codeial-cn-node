@@ -2,6 +2,9 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/", (req, res) => res.render("home/index"));
+router.get("/", function (req, res) {
+    const message = req.flash('message');
+    return res.render('home/index', { message });
+});
 
 export { router };

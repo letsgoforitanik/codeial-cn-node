@@ -1,5 +1,9 @@
 import { Model } from "mongoose";
 
+type RemoveLibTypes<Type> = {
+    [Property in keyof Type]: Type[Property] extends string | number | boolean | bigint ? Type[Property] : any
+};
+
 type InferTSSchema<TModel> = TModel extends Model<infer X> ? X : never;
 type ExcludeTimestamps<T> = Omit<T, "createdAt" | "updatedAt">;
 type WithId<T> = T & { id: string };
