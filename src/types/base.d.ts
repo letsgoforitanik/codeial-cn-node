@@ -18,4 +18,9 @@ type ErrorResult = {
     errors: { path?: string, message: string }[];
 };
 
+
+type AddType<T, TNew> = { [Property in keyof T]: T[Property] | TNew };
+
+type AddUnion<TSource, TProperty extends keyof TSource, TNew> = AddType<Pick<TSource, TProperty>, TNew> & Omit<TSource, TProperty>
+
 type Result<T> = SuccessResult<T> | ErrorResult;

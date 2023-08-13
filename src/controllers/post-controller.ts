@@ -24,15 +24,7 @@ postRouter.post('/create', authorizedOnly, async function (req, res) {
     const user = req.user as UserDto;
     const content = result.data.content;
 
-    const response = await postRepo.createPost({ content, user });
-
-    if (!response.success) {
-        return res.render('home/index', {
-            errorMessage: response.errors[0].message,
-            data: req.body
-        });
-    }
-
+    await postRepo.createPost({ content, user });
 
     req.flash('message', 'Post created successfully');
 

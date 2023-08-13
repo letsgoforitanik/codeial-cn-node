@@ -5,12 +5,12 @@
     "main": "src/app.ts",
     "scripts": {
         "build:sass": "sass assets/sass:assets/css --no-source-map",
-        "build:typescript": "tsc && tsc-alias",
+        "build:ts": "tsc && tsc-alias",
         "copy:ejs": "copyfiles -u 1 src/**/*.ejs dist",
-        "build": "npm run build:typescript && npm run build:sass && npm run copy:ejs",
+        "build": "npm run build:ts && npm run build:sass && npm run copy:ejs",
         "watch:sass": "sass --watch assets/sass:assets/css",
-        "watch:typescript": "nodemon src/app.ts",
-        "start": "concurrently \"npm:watch:typescript\" \"npm:watch:sass\"",
+        "watch:ts": "nodemon src/app.ts",
+        "start": "concurrently \"npm:watch:ts\" \"npm:watch:sass\"",
         "prod": "set NODE_ENV=production&&node dist/app.js"
     },
     "author": "Aniruddha Banerjee",

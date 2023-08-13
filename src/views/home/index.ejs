@@ -6,7 +6,7 @@
 
 <%- contentFor('body') %>
 <section id="feed-posts">
-    <h4>Posts</h4>
+    <h2>Posts</h2>
 
     <% if (message) { %><div class="message"><%= message %></div><% } %>
 
@@ -17,4 +17,15 @@
         <br><br>
         <button type="submit">Post</button>
     </form>
+
+    <ul id="posts">
+        <% for (const post of posts) { %>
+            <li>
+                <div><%= post.content %></div>
+                <small><%= post.user.name %></small>
+            </li>
+            <br>
+        <% } %>
+    </ul>
+
 </section>
