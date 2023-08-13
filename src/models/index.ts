@@ -1,3 +1,4 @@
-import User from "./user";
+import User from "./user-model";
+import Post from './post-model';
 
-export { User };
+export { User, Post };
