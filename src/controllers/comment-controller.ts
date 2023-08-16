@@ -29,7 +29,7 @@ commentRouter.post('/create', authorizedOnly, async function (req, res) {
         return res.redirect('back');
     }
 
-    req.flash('message', 'Comment created successfully');
+    req.flash('message', 'Comment added successfully');
 
     return res.redirect('back');
 

@@ -25,8 +25,24 @@
     <ul id="posts">
         <% for (const post of posts) { %>
             <li>
-                <div><%= post.content %></div>
+                <div><b><%= post.content %></b></div>
                 <small><%= post.user.name %></small>
+                
+                <br><br>
+                
+                <div><b>Comments</b></div>
+                
+                <ul>
+                    <% for (const comment of post.comments)  { %>
+                        <li>
+                            <p>
+                                <span><%= comment.content %></span><br>
+                                <small><%= comment.user.name %></small>
+                            </p>
+                        </li>
+                    <% } %>    
+                </ul>
+            
                 <form action="/comments/create" method="post">
                     <input type="hidden" value="<%= post.id %>" name="postId">
                     <input type="text" name="content" placeholder="Type here to comment...">

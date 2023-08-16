@@ -10,11 +10,9 @@ export async function createPost(data: PostCreationDto): Promise<Result<PostDto>
         success: true,
         data: {
             id: post.id,
-            content: post.content,
-            comments: [],
-            user: {
-                id: post.user.id.toString()
-            }
+            comments: post.comments.map(c => ({ id: c._id.toString() })),
+            user: { id: post.user._id.toString() },
+            content: post.content
         }
     };
 
@@ -22,20 +20,16 @@ export async function createPost(data: PostCreationDto): Promise<Result<PostDto>
 
 export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
 
-    const posts = await Post.find().populate('user comments');
+    const populateOptions = [
+        { path: 'user' },
+        { path: 'comments', populate: [{ path: 'user' }] }
+    ];
+
+    const posts: PostDto[] = await Post.find().populate(populateOptions);
 
     return {
         success: true,
-        data: posts.map((post: any) => ({
-            id: post.id,
-            content: post.content,
-            comments: [],
-            user: {
-                id: post.user.id.toString(),
-                email: post.user.email,
-                name: post.user.name
-            }
-        }))
+        data: posts
     };
 
 }
