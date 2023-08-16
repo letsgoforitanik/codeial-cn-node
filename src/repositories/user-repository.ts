@@ -14,14 +14,20 @@ export async function createUser(info: SignUpInfo): Promise<Result<UserDto>> {
         };
     }
 
-    const result = await User.create(info);
-    return { success: true, data: result as UserDto };
+    const user = await User.create(info);
+
+    const { id, email, name, password } = user;
+
+    return {
+        success: true,
+        data: { id, email, name, password }
+    };
 
 }
 
-export async function findUserByEmail(email: string): Promise<Result<UserDto>> {
+export async function findUserByEmail(emailId: string): Promise<Result<UserDto>> {
 
-    const user = await User.findOne({ email }, 'name email password');
+    const user = await User.findOne({ email: emailId });
 
     if (!user) {
         return {
@@ -30,13 +36,18 @@ export async function findUserByEmail(email: string): Promise<Result<UserDto>> {
         }
     }
 
-    return { success: true, data: user as UserDto };
+    const { id, email, name, password } = user;
+
+    return {
+        success: true,
+        data: { id, email, name, password }
+    };
 
 }
 
-export async function findUserById(id: string): Promise<Result<UserDto>> {
+export async function findUserById(userId: string): Promise<Result<UserDto>> {
 
-    const user = await User.findById(id, 'name email password');
+    const user = await User.findById(userId, 'name email');
 
     if (!user) {
         return {
@@ -45,6 +56,11 @@ export async function findUserById(id: string): Promise<Result<UserDto>> {
         }
     }
 
-    return { success: true, data: user as UserDto };
+    const { id, email, name, password } = user;
+
+    return {
+        success: true,
+        data: { id, email, name, password }
+    };
 
 }

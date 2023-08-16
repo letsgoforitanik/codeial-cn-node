@@ -24,7 +24,7 @@ postRouter.post('/create', authorizedOnly, async function (req, res) {
     const user = req.user as UserDto;
     const content = result.data.content;
 
-    await postRepo.createPost({ content, user });
+    await postRepo.createPost({ content, user, comments: [] });
 
     req.flash('message', 'Post created successfully');
 

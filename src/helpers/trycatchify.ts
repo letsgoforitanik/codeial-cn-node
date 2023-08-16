@@ -13,11 +13,14 @@ function trycatchifyRouter(router: Router) {
 
         if (layer.route && layer.route.path) {
             const route = layer.route;
-            const routeHandler = route.stack[0].handle;
+            const routeStack = route.stack;
+            const routeHandler = routeStack[routeStack.length - 1].handle;
 
-            route.stack[0].handle = function (req: Request, res: Response, next: NextFunction) {
+            routeStack[routeStack.length - 1].handle = function (req: Request, res: Response, next: NextFunction) {
                 Promise.resolve().then(() => routeHandler(req, res, next)).catch(error => next(error));
             };
+
+
         }
 
     }

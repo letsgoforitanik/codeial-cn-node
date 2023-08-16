@@ -1,8 +1,15 @@
 import { Model } from "mongoose";
 
-type RemoveLibTypes<Type> = {
-    [Property in keyof Type]: Type[Property] extends string | number | boolean | bigint ? Type[Property] : any
+
+type ChangePropertyType<Type, Attribute extends string, TNew> = {
+    [Property in keyof Type]: Property extends Attribute ? TNew : Type[Property];
 };
+
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+type PartialByAllExcept<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
+
+type PartialByAllExceptId<T extends { id: string }> = PartialByAllExcept<T, "id">;
 
 type InferTSSchema<TModel> = TModel extends Model<infer X> ? X : never;
 type ExcludeTimestamps<T> = Omit<T, "createdAt" | "updatedAt">;

@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 
 import { homeController, userController } from "@controllers";
 import { postController, errorController } from '@controllers';
+import { commentController } from "@controllers";
 import { errorHandler, viewBag, locals } from '@middlewares';
 import { getAbsPath, trycatchify } from "@helpers";
 import { initializeDb, passport, sessionConfig } from "@config";
@@ -31,6 +32,7 @@ function configurePipeline(app: express.Express) {
     app.use(homeController.router);
     app.use(userController.router);
     app.use(postController.router);
+    app.use(commentController.router);
     app.use(errorController.router);
     // global error handler =====
     app.use(errorHandler);
