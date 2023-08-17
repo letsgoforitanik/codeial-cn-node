@@ -27,6 +27,10 @@
             <li>
                 <div><b><%= post.content %></b></div>
                 <small><%= post.user.name %></small>
+
+                <% if (post.user.id === user?.id) { %>
+                    <a href="/posts/delete/<%= post.id %>">Delete</a>  
+                <% } %>
                 
                 <br><br>
                 
@@ -38,6 +42,11 @@
                             <p>
                                 <span><%= comment.content %></span><br>
                                 <small><%= comment.user.name %></small>
+
+                                <% if (comment.user.id === user?.id) { %>
+                                    <a href="/comments/delete/<%= comment.id %>">Delete</a>
+                                <% } %>
+
                             </p>
                         </li>
                     <% } %>    

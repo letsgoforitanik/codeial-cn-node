@@ -1,9 +1,8 @@
 import { User } from "@models";
-import { UserDto } from "types/dto";
-import { SignUpInfo } from "types/validation";
+import { UserCreationDto, UserDocument, UserDto } from "types/dto";
 import { Result } from "types/base";
 
-export async function createUser(info: SignUpInfo): Promise<Result<UserDto>> {
+export async function createUser(info: UserCreationDto): Promise<Result<UserDto>> {
 
     const userCount = await User.count({ email: info.email });
 
@@ -14,7 +13,7 @@ export async function createUser(info: SignUpInfo): Promise<Result<UserDto>> {
         };
     }
 
-    const user = await User.create(info);
+    const user: UserDocument = await User.create(info);
 
     const { id, email, name, password } = user;
 

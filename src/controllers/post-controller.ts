@@ -24,11 +24,26 @@ postRouter.post('/create', authorizedOnly, async function (req, res) {
     const user = req.user as UserDto;
     const content = result.data.content;
 
-    await postRepo.createPost({ content, user, comments: [] });
+    await postRepo.createPost({ content, user: { id: user.id }, comments: [] });
 
     req.flash('message', 'Post created successfully');
 
     return res.redirect('/');
+
+});
+
+postRouter.get('/delete/:id', authorizedOnly, async function (req, res) {
+
+    const postId = req.params.id;
+
+    const loggedInUser = req.user as UserDto;
+
+    const result = await postRepo.deletePost(postId, loggedInUser.id);
+
+    if (!result.success) req.flash('errorMesage', result.errors[0].message);
+    else req.flash('message', 'Comment successfully deleted');
+
+    return res.redirect('back');
 
 });
 

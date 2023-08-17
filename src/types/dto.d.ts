@@ -1,26 +1,67 @@
-import { User, Post, Comment } from "@models";
-import { ExcludeTimestamps, InferTSSchema, PartialByAllExceptId } from "./base";
-import { WithId, ChangePropertyType } from './base';
+import { HydratedDocument, Types } from "mongoose";
+import { User } from "@models";
+import { InferMongooseSchema, CreateDto, } from "./base";
+import { Timestamps, MongooseTimestamps, Id, ExcludeTimestamps } from "./base";
 
-// user ====
-type UserOriginalSchema = InferTSSchema<typeof User>;
-type UserCreationDto = ExcludeTimestamps<UserOriginalSchema>;
-type UserDto = PartialByAllExceptId<WithId<UserCreationDto>>;
+//  user 
 
+type UserSchema = InferMongooseSchema<typeof User>;
 
+type UserDocument = HydratedDocument<UserSchema>;
 
-// post ====
-type PostOriginalSchema = InferTSSchema<typeof Post>;
-type PostSchemaC1 = ChangePropertyType<PostOriginalSchema, "user", UserDto>;
-type PostSchema = ChangePropertyType<PostSchemaC1, "comments", CommentDto[]>;
-type PostCreationDto = ExcludeTimestamps<PostSchema>;
-type PostDto = PartialByAllExceptId<WithId<PostCreationDto>>;
+interface UserDto extends Id, Partial<ExcludeTimestamps<UserSchema>> { }
+
+type UserCreationDto = CreateDto<UserDto>;
 
 
+// post 
 
-// comment ====
-type CommentOriginalSchema = InferTSSchema<typeof Comment>;
-type CommentSchemaC1 = ChangePropertyType<CommentOriginalSchema, "user", UserDto>;
-type CommentSchema = ChangePropertyType<CommentSchemaC1, "post", PostDto>;
-type CommentCreationDto = ExcludeTimestamps<CommentSchema>;
-type CommentDto = PartialByAllExceptId<WithId<CommentCreationDto>>;
+interface PostSchema extends MongooseTimestamps {
+    content: string;
+    user: Types.ObjectId | UserDocument;
+    comments: Types.ObjectId[] | CommentDocument[];
+}
+
+
+type PostDocument = HydratedDocument<PostSchema>;
+
+interface PostDto extends Id, Partial<Timestamps> {
+    content?: string;
+    user?: UserDto;
+    comments?: CommentDto[];
+}
+
+type PostCreationDto = CreateDto<PostDto>;
+
+
+// comment
+interface CommentSchema extends MongooseTimestamps {
+    content: string;
+    user: Types.ObjectId | UserDocument;
+    post: Types.ObjectId | PostDocument;
+}
+
+type CommentDocument = HydratedDocument<CommentSchema>;
+
+interface CommentDto extends Id, Partial<Timestamps> {
+    content?: string;
+    user?: UserDto;
+    post?: PostDto;
+}
+
+
+type CommentCreationDto = CreateDto<CommentDto>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
