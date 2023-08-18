@@ -19,10 +19,8 @@ async function createPost(req: Request, res: Response) {
     const result = validate<PostCreationInfo>(req);
 
     if (!result.success) {
-        return res.render('home/index', {
-            errorMessage: result.errors[0].message,
-            data: req.body
-        });
+        req.setFlashErrors(result.errors[0].message);
+        return res.redirect('back');
     }
 
     const user = req.user as UserDto;
@@ -30,7 +28,7 @@ async function createPost(req: Request, res: Response) {
 
     await postRepo.createPost({ content, user: { id: user.id }, comments: [] });
 
-    req.flash('message', 'Post created successfully');
+    req.setFlashMessage('Post created successfully');
 
     return res.redirect('/');
 
@@ -46,21 +44,21 @@ async function deletePost(req: Request, res: Response) {
     const userResult = await postRepo.getPostUser(postId);
 
     if (!userResult.success) {
-        req.flash('errorMesage', userResult.errors[0].message);
+        req.setFlashErrors(userResult.errors[0].message);
         return res.redirect('back');
     }
 
     const postUser = userResult.data;
 
     if (loggedInUser.id !== postUser.id) {
-        req.flash('errorMessage', 'Unauthorised to delete post');
+        req.setFlashErrors('You are not authorized to delete this post');
         return res.redirect('back');
     }
 
     const result = await postRepo.deletePost(postId);
 
-    if (!result.success) req.flash('errorMesage', result.errors[0].message);
-    else req.flash('message', 'Post successfully deleted');
+    if (!result.success) req.setFlashErrors(result.errors[0].message);
+    else req.setFlashMessage('Post deleted successfully');
 
     return res.redirect('back');
 

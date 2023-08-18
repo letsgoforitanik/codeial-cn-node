@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { Post, Comment } from '@models';
 import { error, success } from '@helpers';
 import { PostCreationDto, PostDto, CommentCreationDto, CommentDto, UserDto } from 'types/dto';
-import { PostDocument, CommentDocument, UserDocument } from 'types/dto';
+import { PostDocument, CommentDocument } from 'types/dto';
 import { Nullable, RemoveId, Result, SuccessResult } from 'types/base';
 
 export async function createPost(data: PostCreationDto): Promise<Result<PostDto>> {

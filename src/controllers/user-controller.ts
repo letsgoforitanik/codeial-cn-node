@@ -36,19 +36,15 @@ async function createUser(req: Request, res: Response) {
     const result = validate<SignUpInfo>(req);
 
     if (!result.success) {
-        return res.render("user/sign-up", {
-            errorMessage: result.errors[0].message,
-            data: req.body,
-        });
+        req.setFlashErrors(result.errors[0].message);
+        return res.redirect('back');
     }
 
     const response = await userRepo.createUser(result.data);
 
     if (!response.success) {
-        return res.render("user/sign-up", {
-            errorMessage: response.errors[0].message,
-            data: req.body,
-        });
+        req.setFlashErrors(response.errors[0].message);
+        return res.redirect('back');
     }
 
     return res.redirect("/users/sign-in");
@@ -70,15 +66,14 @@ function signinUser(req: Request, res: Response, next: NextFunction) {
         if (err) return next(err);
 
         if (!user) {
-            return res.render('user/sign-in', {
-                errorMessage: info.message,
-                data: req.body
-            });
+            req.setFlashErrors(info.message);
+            return res.redirect('back');
         }
 
         function loginCallback(error: any) {
             if (error) return next(error);
-            res.redirect('/');
+            req.setFlashMessage('Signed in successfully');
+            return res.redirect('/');
         }
 
         req.login(user, loginCallback);
@@ -94,7 +89,10 @@ function signinUser(req: Request, res: Response, next: NextFunction) {
 
 
 function signOutUser(req: Request, res: Response) {
-    return req.logout(() => res.redirect('/users/profile'));
+    return req.logout(() => {
+        req.setFlashMessage('Signed out successfully');
+        return res.redirect('/');
+    });
 }
 
 
@@ -113,6 +111,8 @@ async function renderProfilePage(req: Request, res: Response) {
         return res.render('user/profile', {
             errorMessage: result.errors[0].message
         });
+
+
     }
 
     return res.render('user/profile', { userInfo: result.data });
@@ -126,9 +126,8 @@ async function updateUser(req: Request, res: Response) {
     const result = validate<ProfileUpdateInfo>(req);
 
     if (!result.success) {
-        return res.render('user/profile', {
-            errorMessage: result.errors[0].message
-        });
+        req.setFlashErrors(result.errors[0].message);
+        return res.redirect('back');
     }
 
     const user = req.user as UserDto;
@@ -136,9 +135,8 @@ async function updateUser(req: Request, res: Response) {
     const response = await userRepo.updateUser(user, result.data);
 
     if (!response.success) {
-        return res.render('user/profile', {
-            errorMessage: response.errors[0].message
-        });
+        req.setFlashErrors(response.errors[0].message);
+        return res.redirect('back');
     }
 
 

@@ -1,5 +1,4 @@
 <%
-    var errorMessage, message;
     viewBag.pageTitle = 'Home'; 
 %>
 
@@ -7,14 +6,6 @@
 <%- contentFor('body') %>
 <section id="feed-posts">
     <h2>Posts</h2>
-
-    <% if (message) { %>
-        <div class="message"><%= message %></div>
-    <% } %>
-
-    <% if (errorMessage)  { %>
-        <div class="error-messsage"><%= errorMessage %></div>
-    <% } %>
 
     <form action="/posts/create" method="post">
         <textarea name="content" cols="30" rows="3" placeholder="Type here..."></textarea>

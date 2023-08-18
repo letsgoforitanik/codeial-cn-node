@@ -12,15 +12,13 @@ router.get("/", renderIndexPage);
 
 async function renderIndexPage(req: Request, res: Response) {
 
-    const message = req.flash('message');
-
     const postResults = await postRepo.getPosts();
     const posts = postResults.data;
 
     const usersResults = await userRepo.getAllUsers();
     const allUsers = usersResults.data;
 
-    return res.render('home/index', { message, posts, allUsers });
+    return res.render('home/index', { posts, allUsers });
 
 }
 

@@ -1,7 +1,15 @@
+<%
+    var errorMessage;
+    if (errors.length > 0) errorMessage = errors[0].message;
+%>
+
 <html>
 
 <head>
     <title>Codeial | <%= viewBag.pageTitle %></title>
+
+    <!-- styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
     <link rel="stylesheet" href="/css/main.css">
     <%- defineContent('style') %>
 </head>
@@ -14,7 +22,25 @@
     
     <%- include('../partials/footer') %>
 
+    <!-- scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
     <%- defineContent('script') %>
+    
+    <% if (message || errorMessage) { %>
+        <script>
+            
+            const noty = new Noty({ 
+                theme : 'metroui', 
+                type: "<%=  message ? 'success' : 'error' %>", 
+                text: "<%= message ? message : errorMessage %>",
+                timeout: 2000 
+            });
+
+            noty.show();
+
+        </script>
+    <% } %>
+
 
 </body>
 

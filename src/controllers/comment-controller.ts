@@ -24,7 +24,7 @@ async function createComment(req: Request, res: Response) {
     const result = validate<CommentCreationInfo>(req);
 
     if (!result.success) {
-        req.flash('message', result.errors[0].message);
+        req.setFlashErrors(result.errors[0].message);
         return res.redirect('back');
     }
 
@@ -33,8 +33,8 @@ async function createComment(req: Request, res: Response) {
 
     const response = await postRepo.addCommentToPost({ post: { id: postId }, user, content });
 
-    if (!response.success) req.flash('errorMessage', response.errors[0].message);
-    else req.flash('message', 'Comment added successfully');
+    if (!response.success) req.setFlashErrors(response.errors[0].message);
+    else req.setFlashMessage('Comment added successfully');
 
     return res.redirect('back');
 
@@ -50,21 +50,21 @@ async function deleteComment(req: Request, res: Response) {
     const userResult = await postRepo.getCommentUser(commentId);
 
     if (!userResult.success) {
-        req.flash('errorMesage', userResult.errors[0].message);
+        req.setFlashErrors(userResult.errors[0].message);
         return res.redirect('back');
     }
 
     const commentUser = userResult.data;
 
     if (loggedInUser.id !== commentUser.id) {
-        req.flash('errorMessage', 'Unauthorised to delete comment');
+        req.setFlashErrors('Unauthorised to delete comment');
         return res.redirect('back');
     }
 
     const response = await postRepo.deleteCommentFromPost(commentId);
 
-    if (!response.success) req.flash('errorMessage', response.errors[0].message);
-    else req.flash('message', 'Comment deleted successfully');
+    if (!response.success) req.setFlashErrors(response.errors[0].message);
+    else req.setFlashMessage('Comment deleted successfully');
 
     return res.redirect('back');
 

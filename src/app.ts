@@ -12,7 +12,7 @@ import { homeController, userController } from "@controllers";
 import { postController, errorController } from '@controllers';
 import { commentController } from "@controllers";
 import { errorHandler, viewBag, locals } from '@middlewares';
-import { getAbsPath, trycatchify } from "@helpers";
+import { getAbsPath, trycatchify, extendExpress } from "@helpers";
 import { initializeDb, passport, sessionConfig } from "@config";
 
 
@@ -49,6 +49,8 @@ async function main() {
     dotenv.config();
 
     const app = express();
+
+    extendExpress();
 
     configureAppSettings(app);
     configurePipeline(app);

@@ -2,6 +2,7 @@ import { Request } from "express";
 import { ZodType } from "zod";
 import { Result } from "types/base";
 import * as validators from "@validators";
+import { error } from '@helpers';
 import { SignInInfo } from "types/validation";
 
 const validatorsMap = new Map<string, ZodType>([
@@ -13,13 +14,12 @@ const validatorsMap = new Map<string, ZodType>([
 ]);
 
 
-function validateData<T>(validator: ZodType, data: object) {
+function validateData<T>(validator: ZodType, data: object): Result<T> {
     const result = validator.safeParse(data);
     if (result.success) return result as Result<T>;
     const errors = result.error.errors.map(({ path, message }) => ({ path: path[0]?.toString(), message }));
-    return { success: false, errors } as Result<T>;
+    return error(errors);
 }
-
 
 
 export function validate<T>(request: Request) {
