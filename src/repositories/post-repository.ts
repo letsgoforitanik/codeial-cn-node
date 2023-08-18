@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import { Post, Comment } from '@models';
+import { error, success } from '@helpers';
 import { PostCreationDto, PostDto, CommentCreationDto, CommentDto, UserDto } from 'types/dto';
 import { PostDocument, CommentDocument, UserDocument } from 'types/dto';
 import { Nullable, RemoveId, Result, SuccessResult } from 'types/base';
@@ -8,15 +9,14 @@ export async function createPost(data: PostCreationDto): Promise<Result<PostDto>
 
     const post: PostDocument = await Post.create({ ...data, user: new Types.ObjectId(data.user.id) });
 
-    return {
-        success: true,
-        data: {
-            id: post.id,
-            comments: [],
-            user: { id: post.user._id.toString() },
-            content: post.content
-        }
+    const postDto = {
+        id: post.id,
+        comments: [],
+        user: { id: post.user._id.toString() },
+        content: post.content
     };
+
+    return success(postDto);
 
 }
 
@@ -31,22 +31,22 @@ export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
 
     const posts: PopulatedPost[] = await Post.find().populate(populateOptions);
 
-    return {
-        success: true,
-        data: posts.map(post => ({
-            id: post.id,
-            content: post.content,
-            user: { ...post.user, id: post.user._id.toString() },
-            comments: post.comments.map((comment: any) => ({
-                id: comment._id.toString(),
-                content: comment.content,
-                user: {
-                    id: comment.user.id,
-                    name: comment.user.name
-                }
-            }))
+    const postsDto = posts.map(post => ({
+        id: post.id,
+        content: post.content,
+        user: { ...post.user, id: post.user._id.toString() },
+        comments: post.comments.map((comment: any) => ({
+            id: comment._id.toString(),
+            content: comment.content,
+            user: {
+                id: comment.user.id,
+                name: comment.user.name
+            }
         }))
-    };
+    }));
+
+
+    return success(postsDto);
 
 }
 
@@ -54,12 +54,7 @@ export async function addCommentToPost(data: CommentCreationDto): Promise<Result
 
     const post = await Post.findById(data.post.id);
 
-    if (!post) {
-        return {
-            success: false,
-            errors: [{ message: 'Post not found' }]
-        };
-    }
+    if (!post) return error('Post not found');
 
     const { user, content } = data;
 
@@ -69,13 +64,7 @@ export async function addCommentToPost(data: CommentCreationDto): Promise<Result
 
     await post.save();
 
-    return {
-        success: true,
-        data: {
-            id: comment.id,
-            ...data
-        }
-    }
+    return success({ ...data, id: comment.id });
 
 }
 
@@ -83,36 +72,21 @@ export async function deletePost(postId: string): Promise<Result<null>> {
 
     const post = await Post.findById(postId);
 
-    if (!post) {
-        return {
-            success: false,
-            errors: [{ message: 'Post not found' }]
-        };
-    }
+    if (!post) return error('Post not found');
 
     await Comment.deleteMany({ _id: { $in: post.comments } });
 
     await post.deleteOne();
 
-    return {
-        success: true,
-        data: null
-    };
+    return success(null);
 
 }
 
 export async function deleteCommentFromPost(commentId: string): Promise<Result<null>> {
 
-    const comment: CommentDocument | null = await Comment.findById(commentId).populate('post user');
+    const comment: Nullable<CommentDocument> = await Comment.findById(commentId).populate('post');
 
-    if (!comment) {
-        return {
-            success: false,
-            errors: [{ message: 'Comment not found' }]
-        };
-    }
-
-    const commentUser = comment.user as UserDocument;
+    if (!comment) return error('Comment not found');
 
     const post = comment.post as PostDocument;
     const postComments = post.comments as Types.ObjectId[];
@@ -123,7 +97,7 @@ export async function deleteCommentFromPost(commentId: string): Promise<Result<n
 
     await comment.deleteOne();
 
-    return { success: true, data: null };
+    return success(null);
 
 
 }
@@ -134,19 +108,11 @@ export async function getPostUser(postId: string): Promise<Result<UserDto>> {
 
     const post: PopulatedPost = await Post.findById(postId).populate('user');
 
-    if (!post) {
-        return {
-            success: false,
-            errors: [{ message: 'Post not found' }]
-        }
-    }
+    if (!post) return error('Post not found');
 
     const { id, name, email } = post.user;
 
-    return {
-        success: true,
-        data: { id, name, email }
-    }
+    return success({ id, name, email });
 
 }
 
@@ -156,17 +122,9 @@ export async function getCommentUser(commentId: string): Promise<Result<UserDto>
 
     const comment: PopulatedComment = await Comment.findById(commentId).populate('user');
 
-    if (!comment) {
-        return {
-            success: false,
-            errors: [{ message: 'Post not found' }]
-        }
-    }
+    if (!comment) return error('Comment not found');
 
     const { id, name, email } = comment.user;
 
-    return {
-        success: true,
-        data: { id, name, email }
-    }
+    return success({ id, name, email });
 }
