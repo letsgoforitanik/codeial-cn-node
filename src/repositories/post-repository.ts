@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
 import { Post, Comment } from '@models';
-import { PostCreationDto, PostDto, CommentCreationDto, CommentDto } from 'types/dto';
+import { PostCreationDto, PostDto, CommentCreationDto, CommentDto, UserDto } from 'types/dto';
 import { PostDocument, CommentDocument, UserDocument } from 'types/dto';
-import { Result, SuccessResult } from 'types/base';
+import { Nullable, RemoveId, Result, SuccessResult } from 'types/base';
 
 export async function createPost(data: PostCreationDto): Promise<Result<PostDto>> {
 
@@ -27,11 +27,25 @@ export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
         { path: 'comments', populate: [{ path: 'user' }] }
     ];
 
-    const posts: PostDto[] = await Post.find().populate(populateOptions);
+    type PopulatedPost = RemoveId<PostDocument, "user" | "comments">;
+
+    const posts: PopulatedPost[] = await Post.find().populate(populateOptions);
 
     return {
         success: true,
-        data: posts
+        data: posts.map(post => ({
+            id: post.id,
+            content: post.content,
+            user: { ...post.user, id: post.user._id.toString() },
+            comments: post.comments.map((comment: any) => ({
+                id: comment._id.toString(),
+                content: comment.content,
+                user: {
+                    id: comment.user.id,
+                    name: comment.user.name
+                }
+            }))
+        }))
     };
 
 }
@@ -65,7 +79,7 @@ export async function addCommentToPost(data: CommentCreationDto): Promise<Result
 
 }
 
-export async function deletePost(postId: string, loggedInUserId: string): Promise<Result<null>> {
+export async function deletePost(postId: string): Promise<Result<null>> {
 
     const post = await Post.findById(postId);
 
@@ -73,13 +87,6 @@ export async function deletePost(postId: string, loggedInUserId: string): Promis
         return {
             success: false,
             errors: [{ message: 'Post not found' }]
-        };
-    }
-
-    if (post.user.id.toString() !== loggedInUserId) {
-        return {
-            success: false,
-            errors: [{ message: 'Not authorized to delete the post' }]
         };
     }
 
@@ -94,7 +101,7 @@ export async function deletePost(postId: string, loggedInUserId: string): Promis
 
 }
 
-export async function deleteCommentFromPost(commentId: string, loggedInUserId: string): Promise<Result<null>> {
+export async function deleteCommentFromPost(commentId: string): Promise<Result<null>> {
 
     const comment: CommentDocument | null = await Comment.findById(commentId).populate('post user');
 
@@ -106,13 +113,6 @@ export async function deleteCommentFromPost(commentId: string, loggedInUserId: s
     }
 
     const commentUser = comment.user as UserDocument;
-
-    if (commentUser.id !== loggedInUserId) {
-        return {
-            success: false,
-            errors: [{ message: 'Not authorized to delete the post' }]
-        };
-    }
 
     const post = comment.post as PostDocument;
     const postComments = post.comments as Types.ObjectId[];
@@ -126,4 +126,47 @@ export async function deleteCommentFromPost(commentId: string, loggedInUserId: s
     return { success: true, data: null };
 
 
+}
+
+export async function getPostUser(postId: string): Promise<Result<UserDto>> {
+
+    type PopulatedPost = Nullable<RemoveId<PostDocument, "user">>;
+
+    const post: PopulatedPost = await Post.findById(postId).populate('user');
+
+    if (!post) {
+        return {
+            success: false,
+            errors: [{ message: 'Post not found' }]
+        }
+    }
+
+    const { id, name, email } = post.user;
+
+    return {
+        success: true,
+        data: { id, name, email }
+    }
+
+}
+
+export async function getCommentUser(commentId: string): Promise<Result<UserDto>> {
+
+    type PopulatedComment = Nullable<RemoveId<CommentDocument, "user">>;
+
+    const comment: PopulatedComment = await Comment.findById(commentId).populate('user');
+
+    if (!comment) {
+        return {
+            success: false,
+            errors: [{ message: 'Post not found' }]
+        }
+    }
+
+    const { id, name, email } = comment.user;
+
+    return {
+        success: true,
+        data: { id, name, email }
+    }
 }

@@ -1,23 +1,37 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import { validate } from "@helpers";
 import { userRepo } from "@repositories";
 import { passport } from '@config';
-import { SignUpInfo } from "types/validation";
+import { ProfileUpdateInfo, SignUpInfo } from "types/validation";
 import { anonymousOnly, authorizedOnly } from "@middlewares";
+import { UserDto } from "types/dto";
 
 
 const router = express.Router();
 const userRouter = express.Router();
 
+// routes
+
 router.use("/users", userRouter);
 
+userRouter.get("/sign-up", anonymousOnly, renderSignupPage);
+userRouter.post("/sign-up", anonymousOnly, createUser);
+userRouter.get("/sign-in", anonymousOnly, renderSigninPage);
+userRouter.post("/sign-in", anonymousOnly, signinUser);
+userRouter.get("/sign-out", authorizedOnly, signOutUser);
+userRouter.get('/edit-profile', authorizedOnly, renderEditProfilePage);
+userRouter.get("/profile/:id", renderProfilePage);
+userRouter.post('/update', authorizedOnly, updateUser);
 
-// render the sign-up page
-userRouter.get("/sign-up", anonymousOnly, (req, res) => res.render("user/sign-up"));
+
+// route handlers
+
+function renderSignupPage(req: Request, res: Response) {
+    return res.render("user/sign-up");
+}
 
 
-// create user
-userRouter.post("/sign-up", anonymousOnly, async function (req, res) {
+async function createUser(req: Request, res: Response) {
 
     const result = validate<SignUpInfo>(req);
 
@@ -39,16 +53,17 @@ userRouter.post("/sign-up", anonymousOnly, async function (req, res) {
 
     return res.redirect("/users/sign-in");
 
-});
+}
 
 
 
-// render the sign-in page
-userRouter.get("/sign-in", anonymousOnly, (req, res) => res.render("user/sign-in"));
+function renderSigninPage(req: Request, res: Response) {
+    return res.render("user/sign-in")
+}
 
 
-// create session on successful authentication
-userRouter.post("/sign-in", anonymousOnly, function (req, res, next) {
+
+function signinUser(req: Request, res: Response, next: NextFunction) {
 
     function authCallback(err: any, user: any, info: any) {
 
@@ -63,7 +78,7 @@ userRouter.post("/sign-in", anonymousOnly, function (req, res, next) {
 
         function loginCallback(error: any) {
             if (error) return next(error);
-            res.redirect('/users/profile');
+            res.redirect('/');
         }
 
         req.login(user, loginCallback);
@@ -74,20 +89,62 @@ userRouter.post("/sign-in", anonymousOnly, function (req, res, next) {
 
     handler(req, res, next);
 
-});
+}
 
 
-// profile page
-userRouter.get("/profile", authorizedOnly, function (req, res) {
-    return res.render('user/profile');
-});
+
+function signOutUser(req: Request, res: Response) {
+    return req.logout(() => res.redirect('/users/profile'));
+}
 
 
-// sign out
-userRouter.get("/sign-out", authorizedOnly, function (req, res) {
-    req.logout(() => res.redirect('/users/profile'));
-});
 
+function renderEditProfilePage(req: Request, res: Response) {
+    return res.render('user/edit');
+}
+
+
+async function renderProfilePage(req: Request, res: Response) {
+
+    const userId = req.params.id;
+    const result = await userRepo.getUser(userId);
+
+    if (!result.success) {
+        return res.render('user/profile', {
+            errorMessage: result.errors[0].message
+        });
+    }
+
+    return res.render('user/profile', { userInfo: result.data });
+
+}
+
+
+
+async function updateUser(req: Request, res: Response) {
+
+    const result = validate<ProfileUpdateInfo>(req);
+
+    if (!result.success) {
+        return res.render('user/profile', {
+            errorMessage: result.errors[0].message
+        });
+    }
+
+    const user = req.user as UserDto;
+
+    const response = await userRepo.updateUser(user, result.data);
+
+    if (!response.success) {
+        return res.render('user/profile', {
+            errorMessage: response.errors[0].message
+        });
+    }
+
+
+    return res.redirect('/');
+
+}
 
 
 

@@ -63,3 +63,14 @@
     </ul>
 
 </section>
+
+<section id="user-friends">
+    <h2>Friends</h2>
+    
+    <% for (const user of allUsers) { %>
+        <p>
+            <a href="/users/profile/<%= user.id %>"><%= user.name %></a><br>
+            <small><%= user.email %></small>
+        </p>
+    <% } %>
+</section>

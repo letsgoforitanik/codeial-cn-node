@@ -5,3 +5,4 @@ type SignUpInfo = z.infer<typeof validators.signupValidator>;
 type SignInInfo = z.infer<typeof validators.signinValidator>;
 type PostCreationInfo = z.infer<typeof validators.postCreateValidator>;
 type CommentCreationInfo = z.infer<typeof validators.commentCreateValidator>;
+type ProfileUpdateInfo = z.infer<typeof validators.profileUpdateValidator>;

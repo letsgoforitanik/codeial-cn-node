@@ -1,0 +1,21 @@
+<header>
+    <nav>
+        
+        <div class="mini-logo">
+            <p><a href='/'>codeial</a></p>
+        </div>
+
+        <div class="auth-links">
+            <ul>
+                <% if (user) { %>
+                    <li><a href="/users/edit-profile"><%= user.name %></a></li>
+                    <li><a href="/users/sign-out">Sign Out</a></li>
+                <% } else { %>
+                    <li><a href="/users/sign-in">Sign In</a></li>
+                    <li><a href="/users/sign-in">Sign Up</a></li>
+                <% } %>
+            </ul>
+        </div>
+
+    </nav>
+</header>

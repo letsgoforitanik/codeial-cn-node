@@ -1,0 +1,13 @@
+<%
+    viewBag.pageTitle = 'Edit Profile';
+%>
+
+
+<%- contentFor('body') %>
+<h2>Edit Profile</h2>
+
+<form action="/users/update" method="POST">
+    <input type="text" name="name" placeholder="Your Name" value="<%= user.name %>" required>
+    <input type="email" name="email" placeholder="Your Email" value="<%= user.email %>" required>
+    <button type="submit">Update</button>
+</form>

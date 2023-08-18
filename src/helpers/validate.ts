@@ -8,7 +8,8 @@ const validatorsMap = new Map<string, ZodType>([
     ["/users/sign-up", validators.signupValidator],
     ['/users/sign-in', validators.signinValidator],
     ['/posts/create', validators.postCreateValidator],
-    ['/comments/create', validators.commentCreateValidator]
+    ['/comments/create', validators.commentCreateValidator],
+    ['/users/update', validators.profileUpdateValidator]
 ]);
 
 

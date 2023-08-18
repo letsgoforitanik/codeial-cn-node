@@ -1,54 +1,54 @@
-import { Model } from "mongoose";
+import { HydratedDocument, Model, Types } from "mongoose";
 
-type CreateDto<TSchema, K extends (keyof TSchema | "") = ""> = Concrete<Omit<TSchema, K | "id" | "createdAt" | "updatedAt">>;
-type ExcludeTimestamps<TSchema> = Omit<TSchema, "createdAt" | "updatedAt">;
+// types =================================================================
 
-type Concrete<Type> = {
-    [Property in keyof Type]-?: Type[Property];
-};
 
-type ChangePropertyType<Type, Attribute extends string, TNew> = {
-    [Property in keyof Type]: Property extends Attribute ? TNew : Type[Property];
-};
+// opposite of partial, make all property required
+
+type Concrete<Type> = { [Property in keyof Type]-?: Type[Property]; };
 
 type WithId<TSchema> = TSchema & { id: string };
 
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type RequiredBy<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+// infer typescript schema from mongoose model
 
-type PartialByAllExcept<T, K extends keyof T> = Pick<T, K> & Partial<Omit<T, K>>;
+type InferSchema<TMongooseModel> = TMongooseModel extends Model<infer X> ? X : never;
 
-type PartialByAllExceptId<T extends { id: string }> = PartialByAllExcept<T, "id">;
+type SchemaFromDoc<TDocument> = TDocument extends HydratedDocument<infer X> ? X : never;
 
-type InferTSSchema<TModel> = TModel extends Model<infer X> ? X : never;
+// create dto for creating model object by removing id, createdAt, updatedAt from main dto
 
+type CreateDto<TSchema, K extends (keyof TSchema | "") = ""> = Concrete<Omit<TSchema, K | "id" | "createdAt" | "updatedAt">>;
 
-type SuccessResult<T> = {
-    success: true;
-    data: T;
-};
+type ExcludeTimestamps<TSchema> = Omit<TSchema, "createdAt" | "updatedAt">;
 
-type ErrorResult = {
-    success: false;
-    errors: { path?: string, message: string }[];
-};
+type Error = { path?: string, message: string };
 
+type SuccessResult<T> = { success: true; data: T; }
+
+type ErrorResult = { success: false; errors: Error[]; }
 
 type Result<T> = SuccessResult<T> | ErrorResult;
 
-type InferMongooseSchema<TModel> = TModel extends Model<infer X> ? X : never;
+// helpful to remove bugging objectid
 
-type AddType<TSchema, TProp extends keyof TSchema, TNew> = {
-    [Property in keyof TSchema]: Property extends TProp ? TSchema[Property] | TNew : TSchema[Property];
-}
+type ConvertSchema<TSchema, Keys extends keyof TSchema> = {
+    [Property in Keys]: TSchema[Property] extends (Types.ObjectId | Types.ObjectId[]) | infer X ? X : TSchema[Property]
+} & Omit<TSchema, Keys>
 
-type Convert<TSchema> = {
-    [Property in keyof TSchema]: TSchema[Property] extends NativeDate ? Date : TSchema[Property]
-}
+type RemoveId<TDocument extends HydratedDocument<any, any, any>, Keys extends keyof SchemaFromDoc<TDocument>>
+    = HydratedDocument<ConvertSchema<SchemaFromDoc<TDocument>, Keys>>
 
-interface MongooseTimestamps {
-    createdAt: NativeDate;
-    updatedAt: NativeDate;
+
+// nullable type like c#
+
+type Nullable<T> = T | null;
+
+
+// interfaces ==============================================================
+
+
+interface Id {
+    id: string;
 }
 
 interface Timestamps {
@@ -56,6 +56,9 @@ interface Timestamps {
     updatedAt: Date;
 }
 
-interface Id {
-    id: string;
+interface MongooseTimestamps {
+    createdAt: NativeDate;
+    updatedAt: NativeDate;
 }
+
+

@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { authorizedOnly } from '@middlewares';
 import { postRepo } from '@repositories';
 import { validate } from '@helpers';
@@ -8,9 +8,18 @@ import { UserDto } from 'types/dto';
 const router = express.Router();
 const commentRouter = express.Router();
 
+// routes
+
 router.use("/comments", commentRouter);
 
-commentRouter.post('/create', authorizedOnly, async function (req, res) {
+commentRouter.post('/create', authorizedOnly, createComment);
+commentRouter.get('/delete/:id', authorizedOnly, deleteComment);
+
+
+// route handlers
+
+
+async function createComment(req: Request, res: Response) {
 
     const result = validate<CommentCreationInfo>(req);
 
@@ -29,22 +38,37 @@ commentRouter.post('/create', authorizedOnly, async function (req, res) {
 
     return res.redirect('back');
 
-});
+}
 
 
-commentRouter.get('/delete/:id', authorizedOnly, async function (req, res) {
+
+async function deleteComment(req: Request, res: Response) {
 
     const commentId = req.params.id;
     const loggedInUser = req.user as UserDto;
 
-    const response = await postRepo.deleteCommentFromPost(commentId, loggedInUser.id);
+    const userResult = await postRepo.getCommentUser(commentId);
+
+    if (!userResult.success) {
+        req.flash('errorMesage', userResult.errors[0].message);
+        return res.redirect('back');
+    }
+
+    const commentUser = userResult.data;
+
+    if (loggedInUser.id !== commentUser.id) {
+        req.flash('errorMessage', 'Unauthorised to delete comment');
+        return res.redirect('back');
+    }
+
+    const response = await postRepo.deleteCommentFromPost(commentId);
 
     if (!response.success) req.flash('errorMessage', response.errors[0].message);
     else req.flash('message', 'Comment deleted successfully');
 
     return res.redirect('back');
 
-});
+}
 
 
 

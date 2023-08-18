@@ -1,17 +1,19 @@
 import { HydratedDocument, Types } from "mongoose";
 import { User } from "@models";
-import { InferMongooseSchema, CreateDto, } from "./base";
+import { InferSchema, CreateDto } from "./base";
 import { Timestamps, MongooseTimestamps, Id, ExcludeTimestamps } from "./base";
 
-//  user 
+// user 
 
-type UserSchema = InferMongooseSchema<typeof User>;
+type UserSchema = InferSchema<typeof User>;
 
 type UserDocument = HydratedDocument<UserSchema>;
 
 interface UserDto extends Id, Partial<ExcludeTimestamps<UserSchema>> { }
 
 type UserCreationDto = CreateDto<UserDto>;
+
+type UserUpdateDto = Partial<UserCreationDto>
 
 
 // post 
@@ -21,7 +23,6 @@ interface PostSchema extends MongooseTimestamps {
     user: Types.ObjectId | UserDocument;
     comments: Types.ObjectId[] | CommentDocument[];
 }
-
 
 type PostDocument = HydratedDocument<PostSchema>;
 
@@ -51,10 +52,6 @@ interface CommentDto extends Id, Partial<Timestamps> {
 
 
 type CommentCreationDto = CreateDto<CommentDto>;
-
-
-
-
 
 
 

@@ -1,4 +1,5 @@
 <%
+    var userInfo, errorMessage;
     viewBag.pageTitle = 'Profile';
 %>
 
@@ -6,5 +7,15 @@
 
 <%- contentFor('body') %>
 <h2>Profile</h2>
-<div>Name : <%= user.name %></div>
-<div>Email : <%= user.email %></div>
+
+<% if (errorMessage) { %>
+    <div class="error-message"><%= errorMessage %></div> 
+<% } %>
+
+<% if (userInfo) { %>
+    <div>Name : <%= userInfo.name %></div>
+    <div>Email : <%= userInfo.email %></div>
+<% } %>
+
+
+
