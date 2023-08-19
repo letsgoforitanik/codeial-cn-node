@@ -10,7 +10,8 @@
         "build": "npm run build:ts && npm run build:sass && npm run copy:ejs",
         "watch:sass": "sass --watch assets/sass:assets/css",
         "watch:ts": "nodemon src/app.ts",
-        "start": "concurrently \"npm:watch:ts\" \"npm:watch:sass\"",
+        "watch:ts-client": "tsc --watch --project \"assets/ts/tsconfig.json\"",
+        "start": "concurrently \"npm:watch:ts\" \"npm:watch:sass\"  \"npm:watch:ts-client\"",
         "prod": "set NODE_ENV=production&&node dist/app.js"
     },
     "author": "Aniruddha Banerjee",

@@ -46,11 +46,11 @@ function configureAppSettings(app: express.Express) {
 
 async function main() {
 
+    extendExpress();
+
     dotenv.config();
 
     const app = express();
-
-    extendExpress();
 
     configureAppSettings(app);
     configurePipeline(app);
