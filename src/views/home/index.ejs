@@ -2,6 +2,9 @@
     viewBag.pageTitle = 'Home'; 
 %>
 
+<%- contentFor('style') %>
+<link rel="stylesheet" href="/css/home.css">
+
 
 <%- contentFor('body') %>
 <section id="feed-posts">
@@ -20,7 +23,7 @@
                 <small><%= post.user.name %></small>
 
                 <% if (post.user.id === user?.id) { %>
-                    <a href="/posts/delete/<%= post.id %>">Delete</a>  
+                    <a href="/posts/delete/<%= post.id %>" class="link-delete-post">Delete</a>  
                 <% } %>
                 
                 <br><br>
@@ -49,7 +52,7 @@
                     <button type="submit">Add Comment</button>
                 </form>
             </li>
-            <br>
+
         <% } %>
     </ul>
 

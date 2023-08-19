@@ -4,7 +4,7 @@ export function createPostElement(post: Post) {
     const htmlString = `<li>
                             <div><b>${post.content}</b></div>
                             <small></small>
-                            <a href="/posts/delete/${post.id}">Delete</a>  
+                            <a href="/posts/delete/${post.id}" class="link-delete-post">Delete</a>  
                             <br><br>
                             <div><b>Comments</b></div>
                             <ul></ul>

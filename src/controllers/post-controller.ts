@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { authorizedOnly } from "@middlewares";
 import { postRepo } from "@repositories";
-import { validate } from "@helpers";
+import { error, validate } from "@helpers";
 import { PostCreationInfo } from "types/validation";
 import { UserDto } from "types/dto";
 
@@ -47,6 +47,7 @@ async function deletePost(req: Request, res: Response) {
     const userResult = await postRepo.getPostUser(postId);
 
     if (!userResult.success) {
+        if (req.xhr) return res.status(400).json(userResult);
         req.setFlashErrors(userResult.errors[0].message);
         return res.redirect('back');
     }
@@ -54,15 +55,23 @@ async function deletePost(req: Request, res: Response) {
     const postUser = userResult.data;
 
     if (loggedInUser.id !== postUser.id) {
-        req.setFlashErrors('You are not authorized to delete this post');
+        const message = 'You are not authorized to delete this post';
+        if (req.xhr) return res.status(400).json(error(message));
+        req.setFlashErrors(message);
         return res.redirect('back');
     }
 
     const result = await postRepo.deletePost(postId);
 
-    if (!result.success) req.setFlashErrors(result.errors[0].message);
-    else req.setFlashMessage('Post deleted successfully');
+    if (!result.success) {
+        if (req.xhr) return res.status(400).json(result);
+        req.setFlashErrors(result.errors[0].message);
+        return res.redirect('back');
+    }
 
+    if (req.xhr) return res.json(result);
+
+    req.setFlashMessage('Post deleted successfully');
     return res.redirect('back');
 
 }
