@@ -1,17 +1,26 @@
 <%
     var errorMessage;
     if (errors.length > 0) errorMessage = errors[0].message;
+    var pageName = viewBag.pageTitle;
+    var scriptName = pageName.toLowerCase();
 %>
 
 <html>
 
 <head>
-    <title>Codeial | <%= viewBag.pageTitle %></title>
+    <title>Codeial | <%= pageName %></title>
 
     <!-- styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
     <link rel="stylesheet" href="/css/main.css">
     <%- defineContent('style') %>
+
+     <!-- scripts -->
+     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+     <script data-main="/js/<%= scriptName %>.js" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+     <%- defineContent('script') %>
+     
 </head>
 
 <body>
@@ -22,10 +31,6 @@
     
     <%- include('../partials/footer') %>
 
-    <!-- scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
-    <%- defineContent('script') %>
-    
     <% if (message || errorMessage) { %>
         <script>
             
@@ -40,7 +45,6 @@
 
         </script>
     <% } %>
-
 
 </body>
 

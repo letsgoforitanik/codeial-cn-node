@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
-        "outDir": "../js"
+        "outDir": "../js",
+        "module": "amd",
+        "strict": true,
     }
 }

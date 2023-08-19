@@ -19,6 +19,7 @@ async function createPost(req: Request, res: Response) {
     const result = validate<PostCreationInfo>(req);
 
     if (!result.success) {
+        if (req.xhr) return res.status(400).json(result);
         req.setFlashErrors(result.errors[0].message);
         return res.redirect('back');
     }
@@ -26,7 +27,9 @@ async function createPost(req: Request, res: Response) {
     const user = req.user as UserDto;
     const content = result.data.content;
 
-    await postRepo.createPost({ content, user: { id: user.id }, comments: [] });
+    const response = await postRepo.createPost({ content, user, comments: [] });
+
+    if (req.xhr) return res.json(response);
 
     req.setFlashMessage('Post created successfully');
 
