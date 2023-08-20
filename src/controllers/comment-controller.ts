@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { authorizedOnly } from '@middlewares';
+import { authorizedOnly, validate } from '@middlewares';
 import { postRepo } from '@repositories';
-import { error, validate } from '@helpers';
+import { error } from '@helpers';
 import { CommentCreationInfo } from 'types/validation';
 import { UserDto } from 'types/dto';
 
@@ -12,24 +12,15 @@ const commentRouter = express.Router();
 
 router.use("/comments", commentRouter);
 
-commentRouter.post('/create', authorizedOnly, createComment);
+commentRouter.post('/create', authorizedOnly, validate, createComment);
 commentRouter.get('/delete/:id', authorizedOnly, deleteComment);
 
 
 // route handlers
 
-
 async function createComment(req: Request, res: Response) {
 
-    const result = validate<CommentCreationInfo>(req);
-
-    if (!result.success) {
-        if (req.xhr) return res.status(400).json(result);
-        req.setFlashErrors(result.errors[0].message);
-        return res.redirect('back');
-    }
-
-    const { content, postId } = result.data;
+    const { content, postId } = req.validationResult as CommentCreationInfo;
     const user = req.user as UserDto;
 
     const response = await postRepo.addCommentToPost({ post: { id: postId }, user, content });

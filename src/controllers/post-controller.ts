@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import { authorizedOnly } from "@middlewares";
+import { authorizedOnly, validate } from "@middlewares";
 import { postRepo } from "@repositories";
-import { error, validate } from "@helpers";
+import { error } from "@helpers";
 import { PostCreationInfo } from "types/validation";
 import { UserDto } from "types/dto";
 
@@ -10,22 +10,14 @@ const postRouter = express.Router();
 
 router.use("/posts", postRouter);
 
-postRouter.post('/create', authorizedOnly, createPost);
+postRouter.post('/create', authorizedOnly, validate, createPost);
 postRouter.get('/delete/:id', authorizedOnly, deletePost);
 
 
 async function createPost(req: Request, res: Response) {
 
-    const result = validate<PostCreationInfo>(req);
-
-    if (!result.success) {
-        if (req.xhr) return res.status(400).json(result);
-        req.setFlashErrors(result.errors[0].message);
-        return res.redirect('back');
-    }
-
     const user = req.user as UserDto;
-    const content = result.data.content;
+    const { content } = req.validationResult as PostCreationInfo;
 
     const response = await postRepo.createPost({ content, user, comments: [] });
 

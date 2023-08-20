@@ -1,9 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
-import { validate } from "@helpers";
 import { userRepo } from "@repositories";
 import { passport } from '@config';
 import { ProfileUpdateInfo, SignUpInfo } from "types/validation";
-import { anonymousOnly, authorizedOnly } from "@middlewares";
+import { anonymousOnly, authorizedOnly, validate } from "@middlewares";
 import { UserDto } from "types/dto";
 
 
@@ -15,13 +14,13 @@ const userRouter = express.Router();
 router.use("/users", userRouter);
 
 userRouter.get("/sign-up", anonymousOnly, renderSignupPage);
-userRouter.post("/sign-up", anonymousOnly, createUser);
+userRouter.post("/sign-up", anonymousOnly, validate, createUser);
 userRouter.get("/sign-in", anonymousOnly, renderSigninPage);
 userRouter.post("/sign-in", anonymousOnly, signinUser);
 userRouter.get("/sign-out", authorizedOnly, signOutUser);
 userRouter.get('/edit-profile', authorizedOnly, renderEditProfilePage);
 userRouter.get("/profile/:id", renderProfilePage);
-userRouter.post('/update', authorizedOnly, updateUser);
+userRouter.post('/update', authorizedOnly, validate, updateUser);
 
 
 // route handlers
@@ -33,14 +32,9 @@ function renderSignupPage(req: Request, res: Response) {
 
 async function createUser(req: Request, res: Response) {
 
-    const result = validate<SignUpInfo>(req);
+    const info = req.validationResult as SignUpInfo;
 
-    if (!result.success) {
-        req.setFlashErrors(result.errors[0].message);
-        return res.redirect('back');
-    }
-
-    const response = await userRepo.createUser(result.data);
+    const response = await userRepo.createUser(info);
 
     if (!response.success) {
         req.setFlashErrors(response.errors[0].message);
@@ -111,8 +105,6 @@ async function renderProfilePage(req: Request, res: Response) {
         return res.render('user/profile', {
             errorMessage: result.errors[0].message
         });
-
-
     }
 
     return res.render('user/profile', { userInfo: result.data });
@@ -123,22 +115,15 @@ async function renderProfilePage(req: Request, res: Response) {
 
 async function updateUser(req: Request, res: Response) {
 
-    const result = validate<ProfileUpdateInfo>(req);
-
-    if (!result.success) {
-        req.setFlashErrors(result.errors[0].message);
-        return res.redirect('back');
-    }
-
     const user = req.user as UserDto;
+    const info = req.validationResult as ProfileUpdateInfo;
 
-    const response = await userRepo.updateUser(user, result.data);
+    const response = await userRepo.updateUser(user, info);
 
     if (!response.success) {
         req.setFlashErrors(response.errors[0].message);
         return res.redirect('back');
     }
-
 
     return res.redirect('/');
 
