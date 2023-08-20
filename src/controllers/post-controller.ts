@@ -29,7 +29,7 @@ async function createPost(req: Request, res: Response) {
 
     const response = await postRepo.createPost({ content, user, comments: [] });
 
-    if (req.xhr) return res.json(response);
+    if (req.xhr) return res.status(200).json(response);
 
     req.setFlashMessage('Post created successfully');
 
@@ -69,7 +69,7 @@ async function deletePost(req: Request, res: Response) {
         return res.redirect('back');
     }
 
-    if (req.xhr) return res.json(result);
+    if (req.xhr) return res.status(200).json(result);
 
     req.setFlashMessage('Post deleted successfully');
     return res.redirect('back');

@@ -12,7 +12,7 @@ export async function createPost(data: PostCreationDto): Promise<Result<PostDto>
     const postDto = {
         id: post.id,
         comments: [],
-        user: { id: post.user._id.toString() },
+        user: { id: post.user._id.toString(), name: data.user.name },
         content: post.content
     };
 
@@ -24,17 +24,17 @@ export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
 
     const populateOptions = [
         { path: 'user' },
-        { path: 'comments', populate: [{ path: 'user' }] }
+        { path: 'comments', populate: [{ path: 'user' }], options: { sort: '-createdAt' } }
     ];
 
     type PopulatedPost = RemoveId<PostDocument, "user" | "comments">;
 
-    const posts: PopulatedPost[] = await Post.find().populate(populateOptions);
+    const posts: PopulatedPost[] = await Post.find().sort('-createdAt').populate(populateOptions);
 
     const postsDto = posts.map(post => ({
         id: post.id,
         content: post.content,
-        user: { ...post.user, id: post.user._id.toString() },
+        user: { id: post.user._id.toString(), name: post.user.name },
         comments: post.comments.map((comment: any) => ({
             id: comment._id.toString(),
             content: comment.content,
@@ -64,7 +64,13 @@ export async function addCommentToPost(data: CommentCreationDto): Promise<Result
 
     await post.save();
 
-    return success({ ...data, id: comment.id });
+    const commentDto = {
+        id: comment.id,
+        user: { id: user.id, name: user.name },
+        content: comment.content
+    };
+
+    return success(commentDto);
 
 }
 

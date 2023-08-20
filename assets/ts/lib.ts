@@ -2,7 +2,7 @@ import { Result } from 'types';
 
 declare var Noty: any;
 
-export async function postData<T>(url: string, serializedData: string): Promise<Result<T>> {
+export async function post<T>(url: string, serializedData: string): Promise<Result<T>> {
 
     const options = {
         method: 'POST',
@@ -20,7 +20,7 @@ export async function postData<T>(url: string, serializedData: string): Promise<
 }
 
 
-export async function getData<T>(url: string): Promise<Result<T>> {
+export async function get<T>(url: string): Promise<Result<T>> {
     const response = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
     return await response.json();
 }

@@ -8,7 +8,12 @@ export type Result<T> = SuccessResult<T> | ErrorResult;
 
 /////////////// interfaces
 
-export interface Comment { }
+export interface Comment {
+    id: string;
+    content: string;
+    user: User;
+    post: Post;
+}
 
 export interface User {
     id: string,

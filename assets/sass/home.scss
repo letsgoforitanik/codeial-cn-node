@@ -1,5 +1,16 @@
 section#feed-posts {
     ul#posts > li {
-        margin-bottom: 5px;
+        margin-bottom: 30px;
+
+        div.comment-header {
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-decoration: underline;
+        }
     }
+}
+
+section#user-friends {
+    width: 250px;
 }

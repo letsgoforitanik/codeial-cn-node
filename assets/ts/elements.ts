@@ -1,20 +1,26 @@
-import { Post } from "types";
+import { Post, Comment } from "types";
 
-export function createPostElement(post: Post) {
-    const htmlString = `<li>
-                            <div><b>${post.content}</b></div>
-                            <small></small>
-                            <a href="/posts/delete/${post.id}" class="link-delete-post">Delete</a>  
-                            <br><br>
-                            <div><b>Comments</b></div>
-                            <ul></ul>
+export function getPostElement(post: Post) {
+    return $(`<li>
+                <div><b>${post.content}</b></div>
+                <small>${post.user.name}</small>
+                <a href="/posts/delete/${post.id}" class="link-delete-post">Delete</a>  
+                <div class="comment-header">Comments</div>
 
-                            <form action="/comments/create" method="post">
-                                <input type="hidden" value="${post.id}" name="postId">
-                                <input type="text" name="content" placeholder="Type here to comment...">
-                                <button type="submit">Add Comment</button>
-                            </form>
-                        </li>`;
+                <form action="/comments/create" method="post">
+                    <input type="hidden" value="${post.id}" name="postId">
+                    <input type="text" name="content" placeholder="Type here to comment...">
+                    <button type="submit">Add Comment</button>
+                </form>
+            </li>`);
+}
 
-    return $(htmlString);
+export function getCommentElement(comment: Comment) {
+    return $(`<li>
+                <p>
+                    <span><b>${comment.content}</b></span><br>
+                    <small>${comment.user.name}</small>
+                    <a href="/comments/delete/${comment.id}" class="link-delete-comment">Delete</a>
+                </p>
+            </li>`);
 }
