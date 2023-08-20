@@ -7,6 +7,7 @@ import session from "express-session";
 import flash from 'connect-flash';
 import ejsLayouts from "express-ejs-layouts";
 import dotenv from "dotenv";
+import multer from 'multer';
 
 import { homeController, userController } from "@controllers";
 import { postController, errorController } from '@controllers';
