@@ -6,6 +6,7 @@ export default function validate(req: Request, res: Response, next: NextFunction
 
     if (!result.success) {
         if (req.xhr) return res.status(400).json(result);
+        req.flash('last-request-body', JSON.stringify(req.body));
         req.setFlashErrors(result.errors);
         return res.redirect('back');
     }
