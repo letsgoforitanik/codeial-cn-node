@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 
-if (process.env.NODE_ENV !== 'production') {
-    const environment = process.env.NODE_ENV ?? 'development';
+const environment = process.env.NODE_ENV ?? 'development';
+
+if (environment !== 'production') {
     console.log('Environment -> ', environment);
     dotenv.config();
 }

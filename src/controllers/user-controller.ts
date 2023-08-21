@@ -130,6 +130,7 @@ async function updateUser(req: Request, res: Response, next: NextFunction) {
         const result = validateData<ProfileUpdateInfo>(req);
 
         if (!result.success) {
+            if (req.file) deleteUserAvatar(req.file.filename);
             req.setFlashErrors(result.errors[0].message);
             return res.redirect('back');
         }
