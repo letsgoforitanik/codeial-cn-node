@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import flash from "connect-flash";
 import ejsLayouts from "express-ejs-layouts";
+import busboy from "connect-busboy";
 
 import { homeController, userController } from "@controllers";
 import { postController, errorController } from "@controllers";
@@ -30,6 +31,7 @@ function configurePipeline(app: express.Express) {
     app.use(passport.session());
     app.use(locals);
     app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(busboy());
     // routers ===========
     app.use(homeController.router);
     app.use(userController.router);
