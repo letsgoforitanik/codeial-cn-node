@@ -1,3 +1,5 @@
+import "load-environment";
+
 import http from "http";
 
 import express from "express";
@@ -6,7 +8,6 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import flash from "connect-flash";
 import ejsLayouts from "express-ejs-layouts";
-import dotenv from "dotenv";
 
 import { homeController, userController } from "@controllers";
 import { postController, errorController } from "@controllers";
@@ -48,8 +49,6 @@ function configureAppSettings(app: express.Express) {
 async function main() {
 
     extendExpress();
-
-    dotenv.config();
 
     const app = express();
 

@@ -1,7 +1,7 @@
 <%
     viewBag.pageTitle = 'Edit Profile';
     viewBag.scriptName = 'edit-profile';
-    const userAvatarPath = user.avatar ? `/uploads/user-avatars/${user.avatar}` : `/images/user-avatar.jpg`;
+    const userAvatarPath = user.avatar ? `/${process.env.AVATAR_PATH}/${user.avatar}` : `/images/user-avatar.jpg`;
 %>
 
 <%- contentFor('style') %>

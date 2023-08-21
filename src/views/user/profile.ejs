@@ -12,7 +12,7 @@
 <% } %>
 
 <% if (userInfo) { %>
-    <% var userAvatar =  userInfo.avatar ? `/uploads/user-avatars/${userInfo.avatar}` : `/images/user-avatar.jpg`  %>
+    <% var userAvatar =  userInfo.avatar ? `/${process.env.AVATAR_PATH}/${userInfo.avatar}` : `/images/user-avatar.jpg`  %>
     <section>
         <h2>Profile</h2>
         <img src="<%= userAvatar %>" alt="user-avatar" width="150" style="margin-bottom: 10px;">

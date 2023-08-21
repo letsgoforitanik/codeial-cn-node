@@ -3,7 +3,7 @@ import { getPath } from "@helpers";
 
 const options: Options = {
     storage: multer.diskStorage({
-        destination: getPath('uploads/user-avatars'),
+        destination: getPath(process.env.AVATAR_PATH!),
         filename: function (req, file, cb) {
             const fileExtension = file.originalname.split('.')[1];
             const fileName = file.fieldname + '-' + Date.now() + "." + fileExtension;
