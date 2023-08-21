@@ -1,7 +1,7 @@
 import { HydratedDocument, Types } from "mongoose";
 import { User } from "@models";
 import { InferSchema, CreateDto } from "./base";
-import { Timestamps, MongooseTimestamps, Id, ExcludeTimestamps } from "./base";
+import { Timestamps, MongooseTimestamps, Id, ExcludeTimestamps, PartialBy } from "./base";
 
 // user 
 
@@ -11,7 +11,7 @@ type UserDocument = HydratedDocument<UserSchema>;
 
 interface UserDto extends Id, Partial<ExcludeTimestamps<UserSchema>> { }
 
-type UserCreationDto = CreateDto<UserDto>;
+type UserCreationDto = PartialBy<CreateDto<UserDto>, 'avatar'>;
 
 type UserUpdateDto = Partial<UserCreationDto>
 

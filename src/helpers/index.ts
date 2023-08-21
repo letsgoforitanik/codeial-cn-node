@@ -1,9 +1,10 @@
-import getAbsPath from "./getabspath";
+import { getAbsPath, getPath } from "./getabspath";
 import extendExpress from "./extend-express";
 import trycatchify from "./trycatchify";
 import parseFlashErrors from "./parseflasherrors";
 import { validate, validateSignIn } from "./validate";
 import { success, error } from "./result-builder";
+import deleteUserAvatar from './delete-file';
 
 export {
     getAbsPath,
@@ -13,5 +14,7 @@ export {
     success,
     error,
     extendExpress,
-    parseFlashErrors
+    parseFlashErrors,
+    getPath,
+    deleteUserAvatar
 };

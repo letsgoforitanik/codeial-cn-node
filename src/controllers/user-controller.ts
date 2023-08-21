@@ -1,9 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 import { userRepo } from "@repositories";
-import { passport } from '@config';
+import { passport, uploadUserAvatar } from '@config';
 import { ProfileUpdateInfo, SignUpInfo } from "types/validation";
 import { anonymousOnly, authorizedOnly, validate } from "@middlewares";
-import { UserDto } from "types/dto";
+import { deleteUserAvatar, validate as validateData } from '@helpers';
+import { UserDto, UserUpdateDto } from "types/dto";
 
 
 const router = express.Router();
@@ -20,7 +21,7 @@ userRouter.post("/sign-in", anonymousOnly, signinUser);
 userRouter.get("/sign-out", authorizedOnly, signOutUser);
 userRouter.get('/edit-profile', authorizedOnly, renderEditProfilePage);
 userRouter.get("/profile/:id", renderProfilePage);
-userRouter.post('/update', authorizedOnly, validate, updateUser);
+userRouter.post('/update', authorizedOnly, updateUser);
 
 
 // route handlers
@@ -50,7 +51,6 @@ async function createUser(req: Request, res: Response) {
 function renderSigninPage(req: Request, res: Response) {
     return res.render("user/sign-in")
 }
-
 
 
 function signinUser(req: Request, res: Response, next: NextFunction) {
@@ -113,19 +113,44 @@ async function renderProfilePage(req: Request, res: Response) {
 
 
 
-async function updateUser(req: Request, res: Response) {
+async function updateUser(req: Request, res: Response, next: NextFunction) {
 
-    const user = req.user as UserDto;
-    const info = req.validationResult as ProfileUpdateInfo;
+    const parseMultipart = uploadUserAvatar.single('avatar');
 
-    const response = await userRepo.updateUser(user, info);
+    parseMultipart(req, res, async function (error) {
 
-    if (!response.success) {
-        req.setFlashErrors(response.errors[0].message);
+        if (error instanceof Error) {
+            if (error.message === 'File too large') req.setFlashErrors('Maximum file size is 1 mb');
+            else if (error.message === 'Invalid image file') req.setFlashErrors('Please upload proper image file');
+            else next(error);
+
+            return res.redirect('back');
+        }
+
+        const result = validateData<ProfileUpdateInfo>(req);
+
+        if (!result.success) {
+            req.setFlashErrors(result.errors[0].message);
+            return res.redirect('back');
+        }
+
+        const user = req.user as UserDto;
+        const updateInfo: UserUpdateDto = result.data;
+
+
+        if (req.file) {
+            if (user.avatar) await deleteUserAvatar(user.avatar);
+            updateInfo.avatar = req.file.filename;
+        }
+
+        const response = await userRepo.updateUser(user, updateInfo);
+
+        if (!response.success) req.setFlashErrors(response.errors[0].message);
+        else req.setFlashMessage('Profile updated successfully');
+
         return res.redirect('back');
-    }
 
-    return res.redirect('/');
+    });
 
 }
 

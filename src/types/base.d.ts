@@ -9,6 +9,8 @@ type Concrete<Type> = { [Property in keyof Type]-?: Type[Property]; };
 
 type WithId<TSchema> = TSchema & { id: string };
 
+type PartialBy<TSchema, Key extends keyof TSchema> = Partial<Pick<TSchema, Key>> & Omit<TSchema, Key>;
+
 // infer typescript schema from mongoose model
 
 type InferSchema<TMongooseModel> = TMongooseModel extends Model<infer X> ? X : never;

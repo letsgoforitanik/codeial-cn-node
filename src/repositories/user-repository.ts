@@ -1,7 +1,7 @@
 import { User } from "@models";
 import { success, error } from "@helpers";
 import { UserCreationDto, UserDocument, UserDto, UserUpdateDto } from "types/dto";
-import { Nullable, Result, SuccessResult } from "types/base";
+import { Result, SuccessResult } from "types/base";
 
 export async function createUser(info: UserCreationDto): Promise<Result<UserDto>> {
 
@@ -11,9 +11,9 @@ export async function createUser(info: UserCreationDto): Promise<Result<UserDto>
 
     const user: UserDocument = await User.create(info);
 
-    const { id, email, name, password } = user;
+    const { id, email, name, avatar } = user;
 
-    return success({ id, email, name, password });
+    return success({ id, email, name, avatar });
 
 }
 
@@ -25,9 +25,9 @@ export async function updateUser(user: UserDto, info: UserUpdateDto): Promise<Re
 
     const updatedUser = await User.findByIdAndUpdate(userDoc.id, { ...info });
 
-    const { id, name, email } = updatedUser!;
+    const { id, name, email, avatar } = updatedUser!;
 
-    return success({ id, name, email });
+    return success({ id, name, email, avatar });
 
 }
 
@@ -37,21 +37,21 @@ export async function findUserByEmail(emailId: string): Promise<Result<UserDto>>
 
     if (!user) return error('User not found');
 
-    const { id, email, name, password } = user;
+    const { id, email, name, password, avatar } = user;
 
-    return success({ id, email, name, password });
+    return success({ id, email, name, password, avatar });
 
 }
 
 export async function findUserById(userId: string): Promise<Result<UserDto>> {
 
-    const user = await User.findById(userId, 'name email');
+    const user = await User.findById(userId, 'name email avatar');
 
     if (!user) return error('User not found');
 
-    const { id, email, name, password } = user;
+    const { id, email, name, password, avatar } = user;
 
-    return success({ id, email, name, password });
+    return success({ id, email, name, password, avatar });
 
 }
 
@@ -67,8 +67,8 @@ export async function getUser(userId: string): Promise<Result<UserDto>> {
 
     if (!user) return error('User not found');
 
-    const { id, name, email } = user;
+    const { id, name, email, avatar } = user;
 
-    return success({ id, name, email });
+    return success({ id, name, email, avatar });
 
 } 

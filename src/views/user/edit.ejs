@@ -1,13 +1,23 @@
 <%
     viewBag.pageTitle = 'Edit Profile';
+    viewBag.scriptName = 'edit-profile';
+    const userAvatarPath = user.avatar ? `/uploads/user-avatars/${user.avatar}` : `/images/user-avatar.jpg`;
 %>
+
+<%- contentFor('style') %>
+<link rel="stylesheet" href="/css/profile.css">
 
 
 <%- contentFor('body') %>
-<h2>Edit Profile</h2>
+<section>
+    <h2>Edit Profile</h2>
 
-<form action="/users/update" method="POST">
-    <input type="text" name="name" placeholder="Your Name" value="<%= user.name %>" required>
-    <input type="email" name="email" placeholder="Your Email" value="<%= user.email %>" required>
-    <button type="submit">Update</button>
-</form>
+    <img src="<%= userAvatarPath %>" alt="user-avatar" class="user-avatar" id="img-user-avatar">
+
+    <form action="/users/update" method="POST" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="Your Name" value="<%= user.name %>" required>
+        <input type="email" name="email" placeholder="Your Email" value="<%= user.email %>" required>
+        <input type="file" name="avatar" id="file-user-avatar" accept="image/*">
+        <button type="submit">Update</button>
+    </form>
+</section>

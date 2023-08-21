@@ -4,13 +4,12 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import flash from 'connect-flash';
+import flash from "connect-flash";
 import ejsLayouts from "express-ejs-layouts";
 import dotenv from "dotenv";
-import multer from 'multer';
 
 import { homeController, userController } from "@controllers";
-import { postController, errorController } from '@controllers';
+import { postController, errorController } from "@controllers";
 import { commentController } from "@controllers";
 import { errorHandler, viewBag, locals } from '@middlewares';
 import { getAbsPath, trycatchify, extendExpress } from "@helpers";
@@ -21,6 +20,7 @@ function configurePipeline(app: express.Express) {
     // middlewares ===========
     app.use(ejsLayouts);
     app.use(express.static("assets"));
+    app.use('/uploads', express.static("uploads"));
     app.use(viewBag);
     app.use(cookieParser());
     app.use(session(sessionConfig));

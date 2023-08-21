@@ -15,6 +15,9 @@ const userSchema = new Schema(
             type: Schema.Types.String,
             required: true,
         },
+        avatar: {
+            type: Schema.Types.String
+        }
     },
     {
         timestamps: true,

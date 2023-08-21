@@ -2,7 +2,7 @@
     var errorMessage;
     if (errors.length > 0) errorMessage = errors[0].message;
     var pageName = viewBag.pageTitle;
-    var scriptName = pageName.toLowerCase();
+    var scriptName = viewBag.scriptName || pageName.toLowerCase();
 %>
 
 <html>
