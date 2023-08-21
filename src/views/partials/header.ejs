@@ -8,7 +8,11 @@
         <div class="auth-links">
             <ul>
                 <% if (user) { %>
-                    <li><a href="/users/edit-profile"><%= user.name %></a></li>
+                    <li class="user-info">
+                        <% var userAvatar = user.avatar ? `/uploads/user-avatars/${user.avatar}` : `/images/user-avatar.jpg` %> 
+                        <img src="<%= userAvatar %>" alt="user-avatar" width="25">
+                        <a href="/users/edit-profile"><%= user.name %></a>
+                    </li>
                     <li><a href="/users/sign-out">Sign Out</a></li>
                 <% } else { %>
                     <li><a href="/users/sign-in">Sign In</a></li>
