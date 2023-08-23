@@ -1,4 +1,5 @@
 import { HydratedDocument, Model, Types } from "mongoose";
+import { Response } from "express";
 
 // types =================================================================
 
@@ -62,5 +63,3 @@ interface MongooseTimestamps {
     createdAt: NativeDate;
     updatedAt: NativeDate;
 }
-
-

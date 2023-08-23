@@ -14,7 +14,9 @@
             "@models": ["models/index"],
             "@validators": ["validators/index"],
             "@repositories": ["repositories/index"],
-            "@middlewares" : ["middlewares/index"]
+            "@middlewares" : ["middlewares/index"],
+            "@api": ["api/index"],
+            "@api/*": ["api/*"]
         },
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true

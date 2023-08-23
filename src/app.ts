@@ -9,6 +9,8 @@ import session from "express-session";
 import flash from "connect-flash";
 import ejsLayouts from "express-ejs-layouts";
 
+import apiRouter from "@api";
+
 import { homeController, userController } from "@controllers";
 import { postController, errorController } from "@controllers";
 import { commentController } from "@controllers";
@@ -30,7 +32,9 @@ function configurePipeline(app: express.Express) {
     app.use(passport.session());
     app.use(locals);
     app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
     // routers ===========
+    app.use("/api", apiRouter);
     app.use(homeController.router);
     app.use(userController.router);
     app.use(postController.router);
