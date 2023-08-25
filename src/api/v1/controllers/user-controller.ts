@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import { userRepo } from "@repositories";
-import { authenticateJwt } from "@middlewares";
+import authService from "config/auth";
+
 
 const router = express.Router();
 const userRouter = express.Router();
@@ -11,22 +11,17 @@ const userRouter = express.Router();
 router.use("/users", userRouter)
 
 userRouter.post("/sign-in", signIn);
-userRouter.get("/:id", authenticateJwt(), getUserDetails);
+userRouter.get("/:id", authorizedOnly, getUserDetails);
 
 // route handlers
 
 async function signIn(req: Request, res: Response) {
 
-    const { email, password } = req.body;
-    const response = await userRepo.findUserByEmail(email);
+    authService.verify('jwt', req, res, function (info: string, token: any) {
+        if (info) return res.badRequest(info);
+        return res.status(200).json({ success: true, token });
+    });
 
-    if (!response.success) return res.notFound('User not found');
-    const user = response.data;
-
-    if (user.password !== password) return res.badRequest('Wrong password');
-    const token = jwt.sign(user, 'aniruddha-banerjee', { expiresIn: '1m' });
-
-    return res.success({ token });
 }
 
 
@@ -43,5 +38,10 @@ async function getUserDetails(req: Request, res: Response) {
     return res.success(user);
 }
 
+
+function authorizedOnly(req: Request, res: Response, next: any) {
+    if (!req.user) return res.unauthorized();
+    next();
+}
 
 export { router }

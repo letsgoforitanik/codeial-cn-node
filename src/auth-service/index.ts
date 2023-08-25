@@ -3,7 +3,7 @@ import { Strategy } from "./strategy";
 
 type AuthCallback = (info: string, data: any) => void;
 
-class AuthenticationService {
+export class AuthenticationService {
 
     strategies: Strategy[] = [];
 
@@ -14,8 +14,8 @@ class AuthenticationService {
     public verify(strategyName: string, req: Request, res: Response, callback?: AuthCallback) {
         const strategy = this.strategies.find(s => s.strategyName === strategyName);
         if (!strategy) throw Error(`No strategy found with name ${strategyName}`);
-        const result = strategy.verify(req, res);
-        callback && callback(result.info, result.data);
+        const promise = strategy.verify(req, res);
+        promise.then(result => callback && callback(result.info, result.data));
     }
 
     public authenticate(strategyName: string) {
@@ -23,9 +23,13 @@ class AuthenticationService {
         if (!strategy) throw Error(`No strategy found with name ${strategyName}`);
 
         return function (req: Request, res: Response, next: NextFunction) {
-            const result = strategy.authenticate(req);
-            if (result.success) req.user = result.data;
-            next();
+
+            const promise = strategy.authenticate(req);
+
+            promise.then(function (result) {
+                if (result.success) req.user = result.data;
+                next();
+            });
         }
 
     }

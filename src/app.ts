@@ -16,21 +16,19 @@ import { postController, errorController } from "@controllers";
 import { commentController } from "@controllers";
 import { errorHandler, viewBag, locals } from '@middlewares';
 import { getAbsPath, trycatchify, extendExpress } from "@helpers";
-import { initializeDb, passport, sessionConfig } from "@config";
+import { initializeDb, sessionConfig } from "@config";
 
 
 function configurePipeline(app: express.Express) {
     // middlewares ===========
-    app.use(ejsLayouts);
-    app.use(express.static("assets"));
+    // app.use(ejsLayouts);
+    // app.use(express.static("assets"));
     app.use('/uploads', express.static("uploads"));
-    app.use(viewBag);
+    //app.use(viewBag);
     app.use(cookieParser());
     app.use(session(sessionConfig));
     app.use(flash());
-    app.use(passport.initialize());
-    app.use(passport.session());
-    app.use(locals);
+    //app.use(locals);
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
     // routers ===========

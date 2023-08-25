@@ -13,13 +13,13 @@ class SessionStrategy implements Strategy {
         this.options = options;
     }
 
-    public verify(req: Request, res: Response) {
+    public async verify(req: Request, res: Response) {
         const { usernameField, passwordField } = this.options;
 
         const username = req.body[usernameField];
         const password = req.body[passwordField];
 
-        const result = this.options.verify(username, password);
+        const result = await this.options.verify(username, password);
 
         if (result.payload) {
             Reflect.set(req.session, 'user-data', JSON.parse(result.payload));
@@ -30,12 +30,12 @@ class SessionStrategy implements Strategy {
 
     }
 
-    public authenticate(req: Request): Result<any> {
+    public async authenticate(req: Request): Promise<Result<any>> {
         const userData = JSON.parse(Reflect.get(req.session, 'user-data'));
 
         if (userData) {
             const { populateUser } = this.options;
-            const user = populateUser(userData);
+            const user = await populateUser(userData);
             return { success: true, data: user };
         }
 
