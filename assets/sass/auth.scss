@@ -4,3 +4,26 @@ section {
     align-items: center;
     flex-direction: column;
 }
+
+section#sign-in {
+    a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid black;
+        padding: 8px 15px;
+        text-decoration: none;
+        column-gap: 10px;
+        color: black;
+        margin-top: 8px;
+        border-radius: 2px;
+
+        span {
+            margin-top: 0px;
+        }
+
+        img {
+            width: 20px;
+        }
+    }
+}

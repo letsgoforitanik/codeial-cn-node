@@ -18,6 +18,8 @@ userRouter.get("/sign-up", anonymousOnly, renderSignupPage);
 userRouter.post("/sign-up", anonymousOnly, validate, createUser);
 userRouter.get("/sign-in", anonymousOnly, renderSigninPage);
 userRouter.post("/sign-in", anonymousOnly, signinUser);
+userRouter.get("/sign-in/google", anonymousOnly, passport.authenticate('google', { scope: ['profile', 'email'] }));
+userRouter.get("/sign-in/google/callback", passport.authenticate('google', { failureRedirect: '/error' }), (req, res) => res.redirect('/'));
 userRouter.get("/sign-out", authorizedOnly, signOutUser);
 userRouter.get('/edit-profile', authorizedOnly, renderEditProfilePage);
 userRouter.get("/profile/:id", renderProfilePage);
@@ -154,7 +156,6 @@ async function updateUser(req: Request, res: Response, next: NextFunction) {
     });
 
 }
-
 
 
 export { router };
