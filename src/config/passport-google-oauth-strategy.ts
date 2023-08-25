@@ -2,7 +2,6 @@ import passport from "passport";
 import { OAuth2Strategy as GoogleOAuthStrategy } from "passport-google-oauth";
 import { Profile, VerifyFunction } from "passport-google-oauth";
 import { userRepo } from "@repositories";
-import { UserDto } from "types/dto";
 
 const options = {
     clientID: "417272592481-8f3gvncudrjurabf11q6179ufeofol6s.apps.googleusercontent.com",

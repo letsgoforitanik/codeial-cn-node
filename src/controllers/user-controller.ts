@@ -10,6 +10,9 @@ import { UserDto, UserUpdateDto } from "types/dto";
 const router = express.Router();
 const userRouter = express.Router();
 
+const startGoogleSignIn = () => passport.authenticate('google', { scope: ['profile', 'email'] });
+const finishGoogleSignIn = () => passport.authenticate('google', { failureRedirect: '/google-signin-error', successRedirect: '/' });
+
 // routes
 
 router.use("/users", userRouter);
@@ -18,8 +21,8 @@ userRouter.get("/sign-up", anonymousOnly, renderSignupPage);
 userRouter.post("/sign-up", anonymousOnly, validate, createUser);
 userRouter.get("/sign-in", anonymousOnly, renderSigninPage);
 userRouter.post("/sign-in", anonymousOnly, signinUser);
-userRouter.get("/sign-in/google", anonymousOnly, signinByGoogle());
-userRouter.get("/sign-in/google/callback", onSigninByGoogle(), (req, res) => res.redirect('/'));
+userRouter.get("/sign-in/google", anonymousOnly, startGoogleSignIn());
+userRouter.get("/sign-in/google/callback", finishGoogleSignIn());
 userRouter.get("/sign-out", authorizedOnly, signOutUser);
 userRouter.get('/edit-profile', authorizedOnly, renderEditProfilePage);
 userRouter.get("/profile/:id", renderProfilePage);
@@ -27,15 +30,6 @@ userRouter.post('/update', authorizedOnly, updateUser);
 
 
 // route handlers
-
-function signinByGoogle() {
-    return passport.authenticate('google', { scope: ['profile', 'email'] });
-}
-
-function onSigninByGoogle() {
-    return passport.authenticate('google', { failureRedirect: '/error' });
-}
-
 
 function renderSignupPage(req: Request, res: Response) {
     return res.render("user/sign-up");
