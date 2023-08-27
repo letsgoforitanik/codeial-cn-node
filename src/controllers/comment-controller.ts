@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { authorizedOnly, validate } from '@middlewares';
 import { postRepo } from '@repositories';
-import { error } from '@helpers';
+import { error, mailer } from '@helpers';
 import { CommentCreationInfo } from 'types/validation';
 import { UserDto } from 'types/dto';
 
@@ -30,6 +30,8 @@ async function createComment(req: Request, res: Response) {
         req.setFlashErrors(response.errors[0].message);
         return res.redirect('back');
     }
+
+    mailer.sendCommentMail(response.data);
 
     if (req.xhr) return res.status(200).json(response);
 

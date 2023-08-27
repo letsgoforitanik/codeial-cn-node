@@ -27,7 +27,9 @@ async function deletePost(req: Request, res: Response) {
 
 async function getPost(req: Request, res: Response) {
     const postId = req.params.id;
-    return res.success({ id: 123, content: 'blah blah' });
+    const response = await postRepo.getPost(postId);
+    if (!response.success) return res.notFound();
+    return res.success(response.data);
 }
 
 

@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { Post, Comment } from '@models';
 import { error, success } from '@helpers';
-import { PostCreationDto, PostDto, CommentCreationDto, CommentDto, UserDto } from 'types/dto';
+import { PostCreationDto, PostDto, CommentCreationDto, CommentDto, UserDto, UserDocument } from 'types/dto';
 import { PostDocument, CommentDocument } from 'types/dto';
 import { Nullable, RemoveId, Result, SuccessResult } from 'types/base';
 
@@ -18,6 +18,12 @@ export async function createPost(data: PostCreationDto): Promise<Result<PostDto>
 
     return success(postDto);
 
+}
+
+export async function getPost(postId: string): Promise<Result<PostDto>> {
+    const post: Nullable<PostDocument> = await Post.findById(postId);
+    if (!post) return error('No post found');
+    return success({ id: post.id, content: post.content });
 }
 
 export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
@@ -52,7 +58,7 @@ export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
 
 export async function addCommentToPost(data: CommentCreationDto): Promise<Result<CommentDto>> {
 
-    const post = await Post.findById(data.post.id);
+    const post: Nullable<PostDocument> = await Post.findById(data.post.id).populate('user');
 
     if (!post) return error('Post not found');
 
@@ -60,14 +66,27 @@ export async function addCommentToPost(data: CommentCreationDto): Promise<Result
 
     const comment = await Comment.create({ content, user: new Types.ObjectId(user.id), post });
 
-    post.comments.push(comment._id);
+    const postComments = post.comments as Types.ObjectId[];
+
+    const postUser = post.user as UserDocument;
+
+    postComments.push(comment._id);
 
     await post.save();
 
     const commentDto = {
         id: comment.id,
         user: { id: user.id, name: user.name },
-        content: comment.content
+        content: comment.content,
+        post: {
+            id: post.id,
+            content: post.content,
+            user: {
+                id: postUser.id,
+                email: postUser.email,
+                name: postUser.name
+            }
+        }
     };
 
     return success(commentDto);

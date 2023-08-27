@@ -5,6 +5,8 @@ import parseFlashErrors from "./parseflasherrors";
 import { validate, validateSignIn } from "./validate";
 import { success, error } from "./result-builder";
 import deleteUserAvatar from './delete-file';
+import renderMailTemplate from "./render-mail-template";
+import * as mailer from "./mailer";
 
 export {
     getAbsPath,
@@ -16,5 +18,7 @@ export {
     extendExpress,
     parseFlashErrors,
     getPath,
-    deleteUserAvatar
+    deleteUserAvatar,
+    renderMailTemplate,
+    mailer
 };
