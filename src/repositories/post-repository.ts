@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { Post, Comment } from '@models';
+import { Post, Comment, Like } from '@models';
 import { error, success } from '@helpers';
 import { PostCreationDto, PostDto, CommentCreationDto, CommentDto, UserDto, UserDocument } from 'types/dto';
 import { PostDocument, CommentDocument } from 'types/dto';
@@ -30,7 +30,7 @@ export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
 
     const populateOptions = [
         { path: 'user' },
-        { path: 'comments', populate: [{ path: 'user' }], options: { sort: '-createdAt' } }
+        { path: 'comments', populate: [{ path: 'user' }], options: { sort: '-createdAt' } },
     ];
 
     type PopulatedPost = RemoveId<PostDocument, "user" | "comments">;
@@ -47,8 +47,10 @@ export async function getPosts(): Promise<SuccessResult<PostDto[]>> {
             user: {
                 id: comment.user.id,
                 name: comment.user.name
-            }
-        }))
+            },
+            likes: comment.likes ?? { length: 0 }
+        })),
+        likes: post?.likes ?? { length: 0 }
     }));
 
 
@@ -152,4 +154,53 @@ export async function getCommentUser(commentId: string): Promise<Result<UserDto>
     const { id, name, email } = comment.user;
 
     return success({ id, name, email });
+}
+
+
+export async function toggleLikeForUserPost(postId: string, userId: string): Promise<Result<null>> {
+
+    const post = await Post.findById(postId);
+
+    if (!post) return error('Post not found');
+
+    let like = await Like.findOne({ user: new Types.ObjectId(userId), parent: post, parentType: 'Post' });
+
+    if (!like) {
+        const like = await Like.create({ user: new Types.ObjectId(userId), parent: post, parentType: 'Post' });
+        post.likes.push(like._id);
+        await post.save();
+        return success(null);
+    }
+
+
+    post.likes = post.likes.filter(likeId => likeId.toString() !== like!.id);
+    await post.save();
+
+    await like.deleteOne();
+
+    return success(null);
+}
+
+
+export async function toggleLikeForUserComment(commentId: string, userId: string): Promise<Result<null>> {
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) return error('Comment not found');
+
+    let like = await Like.findOne({ user: new Types.ObjectId(userId), parent: comment, parentType: 'Comment' });
+
+    if (!like) {
+        const like = await Like.create({ user: new Types.ObjectId(userId), parent: comment, parentType: 'Comment' });
+        comment.likes.push(like._id);
+        await comment.save();
+        return success(null);
+    }
+
+    comment.likes = comment.likes.filter(likeId => likeId.toString() !== like!.id);
+    await comment.save();
+
+    await like.deleteOne();
+
+    return success(null);
 }

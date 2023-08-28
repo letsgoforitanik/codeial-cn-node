@@ -2,7 +2,8 @@ import workerpool from "workerpool";
 import { getPath, renderMailTemplate } from "@helpers";
 import { CommentDto } from "types/dto";
 
-const pool = workerpool.pool(getPath('dist/helpers/sendmail.js'));
+const scriptPath = getPath('dist/helpers/sendmail.js');
+const pool = workerpool.pool(scriptPath);
 
 export async function sendCommentMail(comment: CommentDto) {
     const html = await renderMailTemplate('comment-added', { comment });

@@ -1,5 +1,5 @@
 import { HydratedDocument, Types } from "mongoose";
-import { User } from "@models";
+import { Like, User } from "@models";
 import { InferSchema, CreateDto } from "./base";
 import { Timestamps, MongooseTimestamps, Id, ExcludeTimestamps, PartialBy } from "./base";
 
@@ -22,6 +22,7 @@ interface PostSchema extends MongooseTimestamps {
     content: string;
     user: Types.ObjectId | UserDocument;
     comments: Types.ObjectId[] | CommentDocument[];
+    likes: Types.ObjectId[] | LikeDocument[];
 }
 
 type PostDocument = HydratedDocument<PostSchema>;
@@ -54,8 +55,9 @@ interface CommentDto extends Id, Partial<Timestamps> {
 type CommentCreationDto = CreateDto<CommentDto>;
 
 
-
-
+// like
+type LikeSchema = InferSchema<typeof Like>;
+type LikeDocument = HydratedDocument<LikeSchema>;
 
 
 

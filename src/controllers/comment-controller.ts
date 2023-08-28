@@ -14,6 +14,7 @@ router.use("/comments", commentRouter);
 
 commentRouter.post('/create', authorizedOnly, validate, createComment);
 commentRouter.get('/delete/:id', authorizedOnly, deleteComment);
+commentRouter.get('/toggle-like/:id', authorizedOnly, toggleLikeOnComment);
 
 
 // route handlers
@@ -78,6 +79,20 @@ async function deleteComment(req: Request, res: Response) {
     return res.redirect('back');
 }
 
+
+
+async function toggleLikeOnComment(req: Request, res: Response) {
+
+    const commentId = req.params.id;
+    const user = req.user as UserDto;
+
+    const result = await postRepo.toggleLikeForUserComment(commentId, user.id);
+
+    if (!result.success) req.setFlashErrors(result.errors[0].message);
+
+    return res.redirect('back');
+
+}
 
 
 export { router };

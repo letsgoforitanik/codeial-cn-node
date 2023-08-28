@@ -12,6 +12,7 @@ router.use("/posts", postRouter);
 
 postRouter.post('/create', authorizedOnly, validate, createPost);
 postRouter.get('/delete/:id', authorizedOnly, deletePost);
+postRouter.get('/toggle-like/:id', authorizedOnly, toggleLikeOnPost);
 
 
 async function createPost(req: Request, res: Response) {
@@ -64,6 +65,20 @@ async function deletePost(req: Request, res: Response) {
     if (req.xhr) return res.status(200).json(result);
 
     req.setFlashMessage('Post deleted successfully');
+    return res.redirect('back');
+
+}
+
+
+async function toggleLikeOnPost(req: Request, res: Response) {
+
+    const postId = req.params.id;
+    const user = req.user as UserDto;
+
+    const result = await postRepo.toggleLikeForUserPost(postId, user.id);
+
+    if (!result.success) req.setFlashErrors(result.errors[0].message);
+
     return res.redirect('back');
 
 }

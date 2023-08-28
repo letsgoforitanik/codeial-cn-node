@@ -20,10 +20,11 @@
         <% for (const post of posts) { %>
             <li>
                 <div><b><%= post.content %></b></div>
-                <small><%= post.user.name %></small>
+                <small><%= post.user.name %> | <a href="/posts/toggle-like/<%= post.id %>">Likes (<%= post.likes.length %>)</a></small>
+                
 
                 <% if (post.user.id === user?.id) { %>
-                    <a href="/posts/delete/<%= post.id %>" class="link-delete-post">Delete</a>  
+                    <small> | <a href="/posts/delete/<%= post.id %>" class="link-delete-post">Delete</a></small>  
                 <% } %>
                                 
                 <div class="comment-header">Comments</div>
@@ -33,10 +34,10 @@
                         <li>
                             <p>
                                 <span><b><%= comment.content %></b></span><br>
-                                <small><%= comment.user.name %></small>
+                                <small><%= comment.user.name %> | <a href="/comments/toggle-like/<%= comment.id %>">Likes (<%= comment.likes.length %>)</a></small>
 
                                 <% if (comment.user.id === user?.id) { %>
-                                    <a href="/comments/delete/<%= comment.id %>" class="link-delete-comment">Delete</a>
+                                    <small> | <a href="/comments/delete/<%= comment.id %>" class="link-delete-comment">Delete</a></small>
                                 <% } %>
 
                             </p>
