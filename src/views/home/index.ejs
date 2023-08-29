@@ -62,9 +62,11 @@
     <h2>Friends</h2>
     
     <% for (const user of allUsers) { %>
+
         <p>
             <a href="/users/profile/<%= user.id %>"><%= user.name %></a><br>
-            <small><%= user.email %></small>
+            <small><%= user.email %></small><br>
+            <small><a href="/users/toggle-friendship/<%= user.id %>"><%= user.isFriend ? "Unfriend" : "Add as Friend" %></a></small> 
         </p>
     <% } %>
 </section>

@@ -27,6 +27,7 @@ userRouter.get("/sign-out", authorizedOnly, signOutUser);
 userRouter.get('/edit-profile', authorizedOnly, renderEditProfilePage);
 userRouter.get("/profile/:id", renderProfilePage);
 userRouter.post('/update', authorizedOnly, updateUser);
+userRouter.get('/toggle-friendship/:id', authorizedOnly, toggleFriendship);
 
 
 // route handlers
@@ -40,7 +41,7 @@ async function createUser(req: Request, res: Response) {
 
     const info = req.validationResult as SignUpInfo;
 
-    const response = await userRepo.createUser(info);
+    const response = await userRepo.createUser({ ...info, friends: [] });
 
     if (!response.success) {
         req.setFlashErrors(response.errors[0].message);
@@ -157,6 +158,21 @@ async function updateUser(req: Request, res: Response, next: NextFunction) {
         return res.redirect('back');
 
     });
+
+}
+
+
+
+async function toggleFriendship(req: Request, res: Response) {
+
+    const userId = req.params.id;
+    const loggedInUserId = Reflect.get(req.user!, 'id');
+
+    const result = await userRepo.toggleFriendship(loggedInUserId, userId);
+
+    if (!result.success) req.setFlashErrors(result.errors[0].message);
+
+    return res.redirect('back');
 
 }
 

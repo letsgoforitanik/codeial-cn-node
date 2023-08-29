@@ -1,5 +1,5 @@
 import { HydratedDocument, Types } from "mongoose";
-import { Like, User } from "@models";
+import { Like, User, Friend } from "@models";
 import { InferSchema, CreateDto } from "./base";
 import { Timestamps, MongooseTimestamps, Id, ExcludeTimestamps, PartialBy } from "./base";
 
@@ -61,6 +61,6 @@ type LikeDocument = HydratedDocument<LikeSchema>;
 
 
 
-
-
-
+// friend
+type FriendSchema = InferSchema<typeof Friend>;
+type FriendDocument = HydratedDocument<FriendSchema>;

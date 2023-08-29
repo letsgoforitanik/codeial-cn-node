@@ -22,7 +22,7 @@ async function verify(accessToken: string, refreshToken: string, profile: Profil
         return done(null, user);
     }
 
-    const result = await userRepo.createUser({ name, email, password: 'xxx123yyyyy' });
+    const result = await userRepo.createUser({ name, email, password: 'xxx123yyyyy', friends: [] });
 
     if (result.success) {
         const user = result.data;

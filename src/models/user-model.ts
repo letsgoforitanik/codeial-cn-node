@@ -17,7 +17,13 @@ const userSchema = new Schema(
         },
         avatar: {
             type: Schema.Types.String
-        }
+        },
+        friends: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        ]
     },
     {
         timestamps: true,
