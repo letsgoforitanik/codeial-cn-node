@@ -10,7 +10,6 @@ const ulPosts = document.getElementById('posts')!;
 const btnsAddComment = document.querySelectorAll('.btn-add-comment')!;
 const linksDeleteComments = document.querySelectorAll('.link-delete-comment')!;
 
-
 // event handlers 
 
 $(btnCreatePost).on('click', handleCreatePost);

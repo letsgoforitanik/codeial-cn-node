@@ -9,6 +9,7 @@ import session from "express-session";
 import flash from "connect-flash";
 import ejsLayouts from "express-ejs-layouts";
 
+import listenForSockets from "socket-server";
 import apiRouter from "@api";
 
 import { homeController, userController } from "@controllers";
@@ -17,6 +18,7 @@ import { commentController } from "@controllers";
 import { errorHandler, viewBag, locals } from '@middlewares';
 import { getAbsPath, trycatchify, extendExpress } from "@helpers";
 import { initializeDb, passport, sessionConfig } from "@config";
+
 
 
 function configurePipeline(app: express.Express) {
@@ -64,9 +66,12 @@ async function main() {
     await initializeDb();
     console.log("Database connection successfully made");
 
-    const port = process.env.PORT;
+    const port = process.env.HTTP_SERVER_PORT;
 
     const server = http.createServer(app);
+
+    listenForSockets(server);
+
     server.listen(port, () => console.log(`Server is up and running on port ${port}`));
 
 }

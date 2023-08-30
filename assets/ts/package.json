@@ -1,6 +1,6 @@
 {
   "dependencies": {
     "@types/jquery": "^3.5.16",
-    "codeial-cn": "file:../.."
+    "socket.io-client": "^4.7.2"
   }
 }
