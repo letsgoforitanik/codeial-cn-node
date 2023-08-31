@@ -1,4 +1,4 @@
-import { Post, Comment } from "types";
+import { Post, Comment } from "./types";
 
 export function getPostElement(post: Post) {
     return $(`<li>

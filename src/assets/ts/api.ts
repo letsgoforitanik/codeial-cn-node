@@ -1,5 +1,5 @@
-import { post, get } from 'lib';
-import { Post, Comment } from 'types';
+import { post, get } from './lib';
+import { Post, Comment } from './types';
 
 export async function createPost(data: any) {
     return await post<Post>('/posts/create', data);

@@ -1,6 +1,6 @@
-import * as api from "api";
-import { showError, showMessage } from "lib";
-import * as elements from "elements";
+import * as api from "./api";
+import { showError, showMessage } from "./lib";
+import * as elements from "./elements";
 
 const btnCreatePost = document.getElementById('btn-create-post')!;
 const formCreatePost = document.getElementById('form-create-post')!;

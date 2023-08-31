@@ -1,9 +1,11 @@
+declare const io: any;
+
 const ulChatMessageList = document.querySelector('#chat-messages-list')!;
 const txtChatMessage = document.querySelector('#chat-message-input')!;
 const txtUserEmail = document.querySelector('#chat-user-email')!;
 const btnSendMessage = document.querySelector('#send-message')!;
 
-const socket = io('ws://localhost:3000') as any;
+const socket = io('ws://localhost:3000');
 
 socket.emit('join-room');
 

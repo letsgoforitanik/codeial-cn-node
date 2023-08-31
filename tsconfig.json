@@ -25,5 +25,5 @@
         "require": ["tsconfig-paths/register"],
         "files": true
     },
-    "exclude": ["assets/**/*.ts"]
+    "exclude": ["src/assets/**/*.ts"]
 }
